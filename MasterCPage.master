@@ -1,0 +1,147 @@
+<%@ Master Language="VB" CodeFile="MasterCPage.master.vb" Inherits="MasterCPage" %>
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="AJX" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+	<title>ATTENDANCE SYSTEM</title>
+  <asp:ContentPlaceHolder ID="cphMain" runat="server" EnableViewState="true">
+  </asp:ContentPlaceHolder>
+</head>
+<body>
+	<form id="form1" runat="server">
+  <ASP:ScriptManager ID="ToolkitScriptManager1" EnableScriptGlobalization="true" runat="server" EnablePageMethods="true" AsyncPostBackTimeout="3600" EnableScriptLocalization="True" ScriptMode="Auto">
+    <Scripts>
+        <asp:ScriptReference Path="/../UserRights/jquery/webkit.js" />
+    </Scripts>
+  </ASP:ScriptManager>
+	<LGM:LGLoading ID="LGLoadingM" runat="server" />
+
+	<script type="text/javascript">
+		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(hideProcessingMPV);
+		Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(showProcessingMPV);
+		function groupClicked(p) {
+		  var tbl = p.parentElement.parentElement;
+		  var o = p.parentElement.rowIndex;
+		  for (ii = 0; ii <= tbl.rows.length - 1; ii++) {
+		    if (ii > o) {
+		      if (tbl.rows[ii].id != '')
+		        return;
+		      if (tbl.rows[ii].style.display == 'none')
+		        tbl.rows[ii].style.display = '';
+		      else
+		        tbl.rows[ii].style.display = 'none';
+		    }
+		  }
+		}
+	</script>
+
+	<table class="master_table">
+		<tr>
+			<td class="c_header">
+				<table style="width: 100%">
+					<tr>
+						<td>
+							<table style="width: 100%">
+								<tr>
+									<td style="width: 80px; vertical-align: top;">
+									</td>
+									<td style="vertical-align: top">
+										<table style="width: 100%">
+											<tr>
+												<td style="text-align: right">
+													<asp:Image ID="Image2" runat="server" ImageUrl="~/App_Themes/Default/Images/headernew.jpg" Height="39px" Width="304px" />
+												</td>
+												<td style="vertical-align: top; text-align: right">
+													<LGM:LoginLine ID="LoginLine1" runat="server" />
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table style="width: 100%">
+					<tr>
+						<td>
+							<table style="width: 100%">
+								<tr>
+									<td id="Td5" runat="server" style="vertical-align: bottom;" class="c_info">
+										<asp:UpdatePanel ID="SelectedApplicationUP1" runat="server">
+											<ContentTemplate>
+												<LGM:Informations ID="Informations1" Visible="false" runat="server" />
+											</ContentTemplate>
+											<Triggers>
+												<asp:AsyncPostBackTrigger ControlID="Informations1" />
+											</Triggers>
+										</asp:UpdatePanel>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table style="width: 100%">
+								<tr>
+									<td class="c_menu" runat="server" id="tdSplitterL" style="width: 250px; padding: 0px; margin: 0px">
+										<div id="divTreeView1" runat="server" style="width: 100%; height: 100%; overflow: hidden; padding: 0px; margin: 0px">
+											<asp:TreeView ID="TreeView1" runat="server" DataSourceID="XmlDataSource1" Width="100%">
+												<DataBindings>
+													<asp:TreeNodeBinding DataMember="Menu" TextField="Text" ValueField="Text" SelectAction="Expand" />
+													<asp:TreeNodeBinding DataMember="MenuItem" NavigateUrlField="NavigateUrl" TextField="Text" ValueField="Text" ImageUrlField="LGImageUrl" />
+													<asp:TreeNodeBinding DataMember="SISMenu" SelectAction="Expand" />
+												</DataBindings>
+												<SelectedNodeStyle ImageUrl="~/App_Themes/Default/Images/folder_open.png" />
+												<RootNodeStyle ImageUrl="~/App_Themes/Default/Images/Home.png" />
+												<NodeStyle ImageUrl="~/App_Themes/Default/Images/folder.png" />
+												<LeafNodeStyle ImageUrl="~/App_Themes/Default/Images/application.png" />
+											</asp:TreeView>
+											<asp:XmlDataSource ID="XmlDataSource1" runat="server" DataFile="~/Default_Menu.xml"></asp:XmlDataSource>
+										</div>
+									</td>
+									<td class="c_body" style="padding-left: 6px;" runat="server" id="tdSplitterR">
+										<asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+										</asp:ContentPlaceHolder>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="c_footer" style="vertical-align: bottom; text-align: center; height: 68px;">
+				<table style="width: 100%">
+					<tr>
+						<td>
+							<span style="color: #ffffff"><font size="1"></font> </span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<font size="1"><span style="color: #ffffff"></span></font>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span style="color: #99ccff">Designed &amp; Developed by:</span> <span style="color: #99ffcc">IT Team</span>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	</form>
+</body>
+</html>
