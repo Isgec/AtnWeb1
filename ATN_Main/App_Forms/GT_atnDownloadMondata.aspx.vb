@@ -148,7 +148,9 @@ Partial Class GT_atnDownloadMondata
     Sql1 &= vbCrLf & " (PR_CurrMonth + (case when pr_currmonth=0 then (case when JDT > convert(datetime,'" & cutofDate.ToString("dd/MM/yyyy") & "',103) then baldays else (case when RDT <= convert(datetime,'" & cutofDate.ToString("dd/MM/yyyy") & "',103) then baldays else 0 end) end) else baldays end)) as payCurr, (PR_Last1Month - PD_Last1Month) as arrLast,  PR_Last2Month - (PD_Last2Month + Arr_Last2InLast1) as Arr2Last "
     Sql1 &= vbCrLf & " FROM (" & sql & ") as b "
     Sql1 &= vbCrLf & " where (RDT >= convert(datetime,'" & startDate.ToString("dd/MM/yyyy") & "',103) OR RDT is NULL) "
+
     'Sql1 &= vbCrLf & "       and (cardno < '9000' or cardno in ('9883','9744','9010','9734','9986','9990'))"
+
     Sql1 &= vbCrLf & "       and (cardno not in ('0009','001059','001364','2641','7778'))"
 
     Dim oRec As List(Of salDays) = Execute(Sql1, yy, mm)
