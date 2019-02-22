@@ -147,6 +147,8 @@ Namespace SIS.ATN
     End Function
     Public Shared Sub CreateOrUpdateConsolidate(ByVal tmpD As SIS.ATN.atnSABySIDays, Optional ByVal Create As Boolean = True)
       Dim Results As SIS.ATN.atnSABySI = tmpD.FK_ATN_SABySIDays_SerialNo
+      Dim For22to31Dec As Boolean = IIf(Results.MonthID = 13, True, False)
+      'If For22to31Dec Then Results.MonthID = 12
       Dim tmpCD As SIS.ATN.atnSiteAttendance = SIS.ATN.atnSiteAttendance.atnSiteAttendanceGetByID(Results.FinYear, Results.MonthID, tmpD.CardNo)
       Dim Found As Boolean = True
       If tmpCD Is Nothing Then
@@ -158,10 +160,11 @@ Namespace SIS.ATN
         tmpCD.CardNo = tmpD.CardNo
         tmpCD.ATNStatusID = atnAplStates.SubmittedToHO
         tmpCD.SAStatusID = atnSAStates.Free
+        tmpCD.For22to31Dec = For22to31Dec
       End If
       Dim BlankFound As Boolean = False
       Dim FilledFound As Boolean = False
-      Dim DaysInMonth As Integer = DateTime.DaysInMonth(Results.FinYear, Results.MonthID)
+      Dim DaysInMonth As Integer = DateTime.DaysInMonth(Results.FinYear, IIf(Results.MonthID = 13, 12, Results.MonthID))
       With tmpCD
         If .SN01 = "" OrElse .SN01 = tmpD.SerialNo Then
           If tmpD.D01 = "" Then

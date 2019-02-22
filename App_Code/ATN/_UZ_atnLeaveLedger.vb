@@ -329,6 +329,7 @@ Namespace SIS.ATN
     Public Property CardNo As String = ""
     Public Property FinYear As String = ""
     Public Property MonthID As String = ""
+    Public Property For22to31Dec As Boolean = False
     Public Property SanctionBy() As String
       Get
         Return _SanctionBy
@@ -407,6 +408,7 @@ Namespace SIS.ATN
         FinYear = aContext(2)
         MonthID = aContext(3)
         CardNo = aContext(4)
+        For22to31Dec = aContext(5)
       Catch ex As Exception
       End Try
       For Each _day As String In aDays

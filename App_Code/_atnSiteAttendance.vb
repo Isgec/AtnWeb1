@@ -10,6 +10,7 @@ Namespace SIS.ATN
     Private _FinYear As String = ""
     Private _MonthID As Int32 = 0
     Private _CardNo As String = ""
+    Public Property For22to31Dec As Boolean = False
     Private _VD01 As String = ""
     Private _VD02 As String = ""
     Private _VD03 As String = ""
@@ -3060,7 +3061,8 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD03",SqlDbType.NVarChar,3, Iif(Record.PD03= "" ,Convert.DBNull, Record.PD03))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD02",SqlDbType.NVarChar,3, Iif(Record.PD02= "" ,Convert.DBNull, Record.PD02))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD05",SqlDbType.NVarChar,3, Iif(Record.PD05= "" ,Convert.DBNull, Record.PD05))
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD04",SqlDbType.NVarChar,3, Iif(Record.PD04= "" ,Convert.DBNull, Record.PD04))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD04", SqlDbType.NVarChar, 3, IIf(Record.PD04 = "", Convert.DBNull, Record.PD04))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@For22to31Dec", SqlDbType.Bit, 3, Record.For22to31Dec)
           Cmd.Parameters.Add("@Return_FinYear", SqlDbType.NVarChar, 5)
           Cmd.Parameters("@Return_FinYear").Direction = ParameterDirection.Output
           Cmd.Parameters.Add("@Return_MonthID", SqlDbType.Int, 11)
@@ -3364,6 +3366,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD02",SqlDbType.NVarChar,3, Iif(Record.PD02= "" ,Convert.DBNull, Record.PD02))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD05",SqlDbType.NVarChar,3, Iif(Record.PD05= "" ,Convert.DBNull, Record.PD05))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD04",SqlDbType.NVarChar,3, Iif(Record.PD04= "" ,Convert.DBNull, Record.PD04))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@For22to31Dec", SqlDbType.Bit, 3, Record.For22to31Dec)
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

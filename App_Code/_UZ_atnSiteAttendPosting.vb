@@ -477,45 +477,74 @@ Namespace SIS.ATN
     Private Shared Function GetContextString(ByVal FinYear As String, ByVal MonthID As Int32, ByVal CardNo As String, ByVal PostingRemarks As String) As String
       Dim Results As SIS.ATN.atnSiteAttendPosting = atnSiteAttendPostingGetByID(FinYear, MonthID, CardNo)
       Dim context As String = ""
-      For I As Integer = 1 To 31
-        Dim tmp As String = ""
-        Dim dy As String = I.ToString.PadLeft(2, "0")
-        Dim md As String = ""
-        Dim yy As String = FinYear
-        If I >= 22 Then
-          If MonthID = 1 Then
-            md = "12"
-            yy = Convert.ToInt32(FinYear) - 1
+      If Results.For22to31Dec Then
+        For I As Integer = 22 To 31
+          Dim tmp As String = ""
+          Dim dy As String = I.ToString.PadLeft(2, "0")
+          Dim md As String = "12"
+          Dim yy As String = FinYear
+          Dim Pprop As String = "PD" & dy
+          tmp = CallByName(Results, Pprop, CallType.Get)
+          '=====TR, HO Converted to OD
+          Select Case tmp
+            Case "HO", "TR"
+              tmp = "OD"
+          End Select
+          '===========================
+          If tmp <> "" Then
+            Dim tmpDt As String = dy & "/" & md & "/" & yy
+            If IsDate(tmpDt) Then
+              If context <> "" Then
+                context &= "±"
+              End If
+              context &= tmpDt & "|" & tmp & "|AD|Site|Site"
+            End If
+          End If
+        Next
+      Else
+        For I As Integer = 1 To 31
+          Dim tmp As String = ""
+          Dim dy As String = I.ToString.PadLeft(2, "0")
+          Dim md As String = ""
+          Dim yy As String = FinYear
+          If I >= 22 Then
+            If MonthID = 1 Then
+              'skip Dec attendance from 22nd to 31
+              Continue For
+              md = "12"
+              yy = Convert.ToInt32(FinYear) - 1
+            Else
+              md = (MonthID - 1).ToString.PadLeft(2, "0")
+              yy = FinYear
+            End If
           Else
-            md = (MonthID - 1).ToString.PadLeft(2, "0")
+            md = (MonthID).ToString.PadLeft(2, "0")
             yy = FinYear
           End If
-        Else
-          md = (MonthID).ToString.PadLeft(2, "0")
-          yy = FinYear
-        End If
-        Dim Pprop As String = "PD" & dy
-        tmp = CallByName(Results, Pprop, CallType.Get)
-        '=====TR, HO Converted to OD
-        Select Case tmp
-          Case "HO", "TR"
-            tmp = "OD"
-        End Select
-        '===========================
-        If tmp <> "" Then
-          Dim tmpDt As String = dy & "/" & md & "/" & yy
-          If IsDate(tmpDt) Then
-            If context <> "" Then
-              context &= "±"
+          Dim Pprop As String = "PD" & dy
+          tmp = CallByName(Results, Pprop, CallType.Get)
+          '=====TR, HO Converted to OD
+          Select Case tmp
+            Case "HO", "TR"
+              tmp = "OD"
+          End Select
+          '===========================
+          If tmp <> "" Then
+            Dim tmpDt As String = dy & "/" & md & "/" & yy
+            If IsDate(tmpDt) Then
+              If context <> "" Then
+                context &= "±"
+              End If
+              context &= tmpDt & "|" & tmp & "|AD|Site|Site"
             End If
-            context &= tmpDt & "|" & tmp & "|AD|Site|Site"
           End If
-        End If
-      Next
+        Next
+      End If
       context = context & ":" & Results.PostingRemarks
       context = context & ":" & Results.FinYear
       context = context & ":" & Results.MonthID
       context = context & ":" & Results.CardNo
+      context = context & ":" & Results.For22to31Dec
       Return context
     End Function
   End Class
