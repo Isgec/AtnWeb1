@@ -13,7 +13,7 @@
               <tr>
                 <td><b>1.</b></td>
                 <td><b>
-                  PF Reports</b>
+                  PF </b>
                 </td>
                 <td>
                   <asp:DropDownList ID="F_Month" runat="server" ClientIDMode="Static">
@@ -33,9 +33,9 @@
                 </td>
                 <td>
                   <asp:DropDownList ID="F_Year" runat="server" ClientIDMode="Static">
-                    <asp:ListItem Text="2018" Value="2018" Selected="True" />
+                    <asp:ListItem Text="2019" Value="2019" Selected="True" />
+                    <asp:ListItem Text="2018" Value="2018"  />
                     <asp:ListItem Text="2017" Value="2017"  />
-                    <asp:ListItem Text="2016" Value="2016"  />
                   </asp:DropDownList>
                 </td>
                 <td>
@@ -44,6 +44,15 @@
                 <td>
                   <asp:Button ID="cmdPFStatement" runat="server" Text="PF Statement" />
                 </td>
+                <td>
+                  <asp:Button ID="Button1" Text="Update PF Value" runat="server" CssClass="mytxt" OnClick="cmdUpdatePF" OnClientClick="return confirm('Do you want to Process ?');" />
+                </td>
+                <td>
+                  <asp:TextBox ID="F_CardNo" runat="server" ClientIDMode="Static" CssClass="mytxt" Width="60px" MaxLength="8"></asp:TextBox>
+                </td>
+                <td>
+                  <asp:CheckBox ID="F_Backup" runat="server" ClientIDMode="Static" CssClass="mychk" Text="Re-Backup" />
+                </td>
               </tr>
               <tr>
                 <td><b>2.</b>
@@ -51,7 +60,7 @@
                 <td><b>
                 Employee Detail</b>
                 </td>
-                <td colspan="3">
+                <td colspan="6">
                 <asp:Button ID="cmdEmpList" runat="server" Text="Print Employee Details" />
                 </td>
               </tr>
@@ -61,7 +70,7 @@
                 <td><b>
                 Loan Detail</b>
                 </td>
-                <td colspan="3">
+                <td colspan="6">
                 <asp:Button ID="cmdLoanReport" runat="server" Text="Print Loan Details" />
                 </td>
               </tr>
@@ -70,6 +79,8 @@
           </td>
         </tr>
       </table>
+
+
     </div>
   </div>
 </asp:Content>

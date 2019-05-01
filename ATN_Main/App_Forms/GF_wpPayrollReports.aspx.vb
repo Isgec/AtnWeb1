@@ -533,5 +533,34 @@ Partial Class GF_wpPayrollReports
   End Class
 #End Region
 
+  Protected Sub cmdUpdatePF(s As Object, e As EventArgs)
+    Dim ForMonth As String = ""
+    Dim ForYear As String = ""
+    Dim ReBackup As Boolean = False
+    Dim CardNo As String = ""
+    Try
+      ForMonth = F_Month.SelectedValue
+      ForYear = F_Year.SelectedValue
+      ReBackup = F_Backup.Checked
+      CardNo = F_CardNo.Text
+    Catch ex As Exception
+    End Try
+    If ForMonth = String.Empty Then Return
+
+    Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetWebPayConnectionString())
+      Using Cmd As SqlCommand = Con.CreateCommand()
+        Cmd.CommandType = CommandType.StoredProcedure
+        Cmd.CommandText = "LG_PF_Update"
+        SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@f_month", SqlDbType.Int, 10, ForMonth)
+        SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@f_year", SqlDbType.Int, 10, ForYear)
+        SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@f_emp", SqlDbType.NVarChar, 8, CardNo)
+        SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@f_rebackup", SqlDbType.Bit, 3, ReBackup)
+        Con.Open()
+        Cmd.ExecuteNonQuery()
+      End Using
+    End Using
+
+  End Sub
+
 End Class
 
