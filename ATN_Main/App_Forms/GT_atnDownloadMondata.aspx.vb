@@ -476,6 +476,7 @@ Partial Class GT_atnDownloadMondata
       End If
     End With
   End Sub
+
 End Class
 Public Class salDays
   Public Property CardNo As String = ""

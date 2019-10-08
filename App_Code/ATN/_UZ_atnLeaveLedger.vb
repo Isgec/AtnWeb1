@@ -86,31 +86,59 @@ Namespace SIS.ATN
 			End Using
 			Return Results
 		End Function
-		Public Shared Function InsertOpeningBalance(ByVal Record As SIS.ATN.atnLeaveLedger) As Int32
-			Dim _Result As Int32 = Record.RecordID
-			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
-				Using Cmd As SqlCommand = Con.CreateCommand()
-					Cmd.CommandType = CommandType.StoredProcedure
-					Cmd.CommandText = "spatnLeaveLedgerInsert"
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TranType", SqlDbType.NVarChar, 4, Record.TranType)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TranDate", SqlDbType.DateTime, 21, Record.TranDate)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 9, Record.CardNo)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LeaveTypeID", SqlDbType.NVarChar, 3, Record.LeaveTypeID)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@InProcessDays", SqlDbType.Decimal, 9, Record.InProcessDays)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Days", SqlDbType.Decimal, 9, Record.Days)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 5, Record.FinYear)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplHeaderID", SqlDbType.Int, 11, IIf(Record.ApplHeaderID = "", Convert.DBNull, Record.ApplHeaderID))
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplDetailID", SqlDbType.Int, 11, IIf(Record.ApplDetailID = "", Convert.DBNull, Record.ApplDetailID))
-					Cmd.Parameters.Add("@Return_RecordID", SqlDbType.Int, 10)
-					Cmd.Parameters("@Return_RecordID").Direction = ParameterDirection.Output
-					Con.Open()
-					Cmd.ExecuteNonQuery()
-					_Result = Cmd.Parameters("@Return_RecordID").Value
-				End Using
-			End Using
-			Return _Result
-		End Function
-		Public Shared Function GetLeaveBalByCardNoType(ByVal CardNo As String, ByVal LeaveType As String) As Decimal
+    Public Shared Function DeleteByApplHeaderID(ByVal RecordID As Int32) As Integer
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = " delete atn_leaveledger where applHeaderID=" & RecordID
+          Con.Open()
+          Cmd.ExecuteNonQuery()
+        End Using
+      End Using
+      Return 0
+    End Function
+    Public Shared Function GetByApplHeaderID(ByVal RecordID As Int32) As List(Of SIS.ATN.atnLeaveLedger)
+      Dim Results As List(Of SIS.ATN.atnLeaveLedger) = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = " select * from atn_leaveledger where applHeaderID=" & RecordID
+          Results = New List(Of SIS.ATN.atnLeaveLedger)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.ATN.atnLeaveLedger(Reader))
+          End While
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
+    Public Shared Function InsertOpeningBalance(ByVal Record As SIS.ATN.atnLeaveLedger) As Int32
+      Dim _Result As Int32 = Record.RecordID
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spatnLeaveLedgerInsert"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TranType", SqlDbType.NVarChar, 4, Record.TranType)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TranDate", SqlDbType.DateTime, 21, Record.TranDate)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 9, Record.CardNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LeaveTypeID", SqlDbType.NVarChar, 3, Record.LeaveTypeID)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@InProcessDays", SqlDbType.Decimal, 9, Record.InProcessDays)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Days", SqlDbType.Decimal, 9, Record.Days)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 5, Record.FinYear)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplHeaderID", SqlDbType.Int, 11, IIf(Record.ApplHeaderID = "", Convert.DBNull, Record.ApplHeaderID))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplDetailID", SqlDbType.Int, 11, IIf(Record.ApplDetailID = "", Convert.DBNull, Record.ApplDetailID))
+          Cmd.Parameters.Add("@Return_RecordID", SqlDbType.Int, 10)
+          Cmd.Parameters("@Return_RecordID").Direction = ParameterDirection.Output
+          Con.Open()
+          Cmd.ExecuteNonQuery()
+          _Result = Cmd.Parameters("@Return_RecordID").Value
+        End Using
+      End Using
+      Return _Result
+    End Function
+    Public Shared Function GetLeaveBalByCardNoType(ByVal CardNo As String, ByVal LeaveType As String) As Decimal
 			Dim Results As Decimal = 0.0
 			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
 				Using Cmd As SqlCommand = Con.CreateCommand()

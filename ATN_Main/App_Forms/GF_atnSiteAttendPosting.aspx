@@ -137,13 +137,13 @@
     <AJX:CollapsiblePanelExtender ID="cpe1" runat="Server" TargetControlID="pnlD" ExpandControlID="pnlH" CollapseControlID="pnlH" Collapsed="True" TextLabelID="lblH" ImageControlID="imgH" ExpandedText="(Hide Filters...)" CollapsedText="(Show Filters...)" ExpandedImage="~/images/ua.png" CollapsedImage="~/images/da.png" SuppressPostBack="true" />
     <asp:GridView ID="GVatnSiteAttendance" SkinID="gv_silverHeader" runat="server" DataSourceID="ODSatnSiteAttendance" DataKeyNames="FinYear,MonthID,CardNo">
       <Columns>
-<%--        <asp:TemplateField HeaderText="EDIT">
+        <asp:TemplateField HeaderText="U-P">
           <ItemTemplate>
-            <asp:ImageButton ID="cmdEditPage" ValidationGroup="Edit" runat="server" Visible='<%# EVal("Visible") %>' Enabled='<%# EVal("Enable") %>' AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandName="lgEdit" CommandArgument='<%# Container.DataItemIndex %>' />
+            <asp:ImageButton ID="cmdUnpost" ValidationGroup="UnPost" runat="server" Visible='<%# Eval("UnPostVisible") %>' AlternateText="Unpost" ToolTip="Unpost the record." SkinID="reject" OnClientClick="return confirm('Un-Post Site Attendance Application ?');" CommandName="lgUnpost" CommandArgument='<%# Container.DataItemIndex %>' />
           </ItemTemplate>
           <ItemStyle CssClass="alignCenter" />
           <HeaderStyle HorizontalAlign="Center" Width="25px" />
-        </asp:TemplateField>--%>
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="Month" SortExpression="ATN_Months3_Description">
           <ItemTemplate>
              <asp:Label ID="L_MonthID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("MonthID") %>' Text='<%# Eval("ATN_Months3_Description") %>'></asp:Label>
@@ -420,7 +420,7 @@
             <tr id="row2" runat="server">
               <td></td>
               <td></td>
-              <td colspan="13" style="text-align:Left">
+              <td colspan="14" style="text-align:Left">
                 <asp:Label ID="L_AsPerSubmitted" runat="server" Font-Italic="true" Font-Size="9px" ForeColor="#BCBCC3" Text="As per submitted data from site" />
               </td>
               <td colspan="4">
@@ -439,6 +439,7 @@
               <td></td>
             </tr>
             <tr id="row1" runat="server">
+              <td></td>
               <td></td>
               <td colspan="34" style="padding:4px 0px 8px 0px;">
                 <div style="display:none">

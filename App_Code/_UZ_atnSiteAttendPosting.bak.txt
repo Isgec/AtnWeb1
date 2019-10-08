@@ -5,19 +5,6 @@ Imports System.Data.SqlClient
 Imports System.ComponentModel
 Namespace SIS.ATN
   Partial Public Class atnSiteAttendPosting
-    Public Shadows ReadOnly Property UnPostVisible() As Boolean
-      Get
-        Dim mRet As Boolean = False
-        Try
-          Select Case ATNStatusID
-            Case atnAplStates.Posted
-              mRet = True
-          End Select
-        Catch ex As Exception
-        End Try
-        Return mRet
-      End Get
-    End Property
     Public Shadows ReadOnly Property InitiateWFVisible() As Boolean
       Get
         Dim mRet As Boolean = False
@@ -327,7 +314,6 @@ Namespace SIS.ATN
           .PostedOn = Now
           .ATNStatusID = atnAplStates.Posted
           .PostingRemarks = oCon.Remarks
-          .LeaveApplID = oAppl.LeaveApplID
         End With
         Results = SIS.ATN.atnSiteAttendPosting.UpdateData(Results)
       Catch ex As Exception
@@ -335,83 +321,6 @@ Namespace SIS.ATN
       End Try
       Return "true"
     End Function
-
-    Public Shared Function UnPostSiteApplication(ByVal sAtn As SIS.ATN.atnSiteAttendance) As SIS.ATN.atnSiteAttendance
-      Try
-        Dim oAppl As SIS.ATN.atnApplHeader = SIS.ATN.atnApplHeader.GetByID(sAtn.LeaveApplID)
-
-        Dim oPPs As List(Of SIS.ATN.atnNewAttendance) = SIS.ATN.atnNewAttendance.GetAttendanceByApplHeaderID(oAppl.LeaveApplID)
-
-        For Each oPP As SIS.ATN.atnNewAttendance In oPPs
-          Select Case oPP.PunchStatusID
-            Case "AF"
-              oPP.Applied1LeaveTypeID = ""
-              oPP.Posted1LeaveTypeID = ""
-              oPP.FinalValue = 0.5
-              oPP.NeedsRegularization = True
-              oPP.ApplHeaderID = ""
-              oPP.Posted = False
-              oPP.Applied = False
-              oPP.AppliedValue = 0
-            Case "AS", "TS"
-              oPP.Applied2LeaveTypeID = ""
-              oPP.Posted2LeaveTypeID = ""
-              oPP.FinalValue = 0.5
-              oPP.NeedsRegularization = True
-              oPP.ApplHeaderID = ""
-              oPP.Posted = False
-              oPP.Applied = False
-              oPP.AppliedValue = 0
-            Case "PR", "WO", "HD"
-              If oPP.Applied = True AndAlso oPP.ApplStatusID = "" Then
-                oPP.PunchStatusID = "AD"
-                oPP.Punch1Time = "00.00"
-                oPP.Punch2Time = "00.00"
-                oPP.NeedsRegularization = True
-                oPP.PunchValue = 0
-                oPP.FinalValue = 0
-                oPP.ApplHeaderID = ""
-                oPP.Posted = False
-                oPP.Applied = False
-                oPP.AppliedValue = 0
-              End If
-            Case Else 'Including "OD"
-              If oPP.Applied = True AndAlso oPP.ApplStatusID = "" Then
-                oPP.PunchStatusID = "AD"
-                oPP.Applied1LeaveTypeID = ""
-                oPP.Applied2LeaveTypeID = ""
-                oPP.Posted1LeaveTypeID = ""
-                oPP.Posted2LeaveTypeID = ""
-                oPP.AppliedValue = 0
-                oPP.PunchValue = 0
-                oPP.FinalValue = 0
-                oPP.Destination = ""
-                oPP.Purpose = ""
-                oPP.NeedsRegularization = True
-                oPP.ApplHeaderID = ""
-                oPP.Posted = False
-                oPP.Applied = False
-              End If
-          End Select
-          SIS.ATN.atnNewAttendance.Update(oPP)
-        Next
-        SIS.ATN.atnLeaveLedger.DeleteByApplHeaderID(oAppl.LeaveApplID)
-        SIS.ATN.atnApplHeader.Delete(oAppl)
-
-        With sAtn
-          .PostedBy = ""
-          .PostedOn = ""
-          .ATNStatusID = atnAplStates.UnderPosting
-          .PostingRemarks = ""
-          .LeaveApplID = ""
-        End With
-        sAtn = SIS.ATN.atnSiteAttendPosting.UpdateData(sAtn)
-      Catch ex As Exception
-        sAtn.PostingRemarks = ex.Message
-      End Try
-      Return sAtn
-    End Function
-
 
     Private Shared Function GetStrByLeaveBalance(ByVal oBals As List(Of SIS.ATN.lgLedgerBalance), ByVal context As String) As String
       Dim err As Boolean = False

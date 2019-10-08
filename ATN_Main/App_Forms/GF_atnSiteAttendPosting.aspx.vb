@@ -12,6 +12,26 @@ Partial Class GF_atnSiteAttendPosting
       Catch ex As Exception
       End Try
     End If
+    If e.CommandName.ToLower = "unpost".ToLower Then
+      Try
+        Dim FinYear As String = GVatnSiteAttendance.DataKeys(e.CommandArgument).Values("FinYear")
+        Dim MonthID As Int32 = GVatnSiteAttendance.DataKeys(e.CommandArgument).Values("MonthID")
+        Dim CardNo As String = GVatnSiteAttendance.DataKeys(e.CommandArgument).Values("CardNo")
+        Dim sAtn As SIS.ATN.atnSiteAttendance = SIS.ATN.atnSiteAttendance.atnSiteAttendanceGetByID(FinYear, MonthID, CardNo)
+        sAtn = SIS.ATN.atnSiteAttendPosting.UnPostSiteApplication(sAtn)
+        If sAtn.PostingRemarks <> "" Then
+          Dim ErrMsg As String = New JavaScriptSerializer().Serialize(sAtn.PostingRemarks)
+          Dim Script As String = String.Format("alert({0});", ErrMsg)
+          ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", Script, True)
+        Else
+          GVatnSiteAttendance.DataBind()
+        End If
+      Catch ex As Exception
+        Dim ErrMsg As String = New JavaScriptSerializer().Serialize(ex.Message.ToString())
+        Dim Script As String = String.Format("alert({0});", ErrMsg)
+        ScriptManager.RegisterClientScriptBlock(Page, Page.GetType(), "", Script, True)
+      End Try
+    End If
     If e.CommandName.ToLower = "initiatewf".ToLower Then
       Try
         Dim PostingRemarks As String = CType(GVatnSiteAttendance.Rows(e.CommandArgument).FindControl("F_PostingRemarks"), TextBox).Text

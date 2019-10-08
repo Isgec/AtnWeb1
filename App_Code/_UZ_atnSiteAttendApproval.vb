@@ -64,7 +64,7 @@ Namespace SIS.ATN
       Results = SIS.ATN.atnSiteAttendApproval.UpdateData(Results)
       Return Results
     End Function
-    Public Shared Function RejectWF(ByVal FinYear As String, ByVal MonthID As Int32, ByVal CardNo As String, ByVal ApproverRemarks As String) As SIS.ATN.atnSiteAttendApproval
+    Public Shared Shadows Function RejectWF(ByVal FinYear As String, ByVal MonthID As Int32, ByVal CardNo As String, ByVal ApproverRemarks As String) As SIS.ATN.atnSiteAttendApproval
       Dim Results As SIS.ATN.atnSiteAttendApproval = atnSiteAttendApprovalGetByID(FinYear, MonthID, CardNo)
       With Results
         .ApprovedBy = HttpContext.Current.Session("LoginID")

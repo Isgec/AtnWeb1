@@ -11,6 +11,7 @@ Namespace SIS.ATN
     Private _MonthID As Int32 = 0
     Private _CardNo As String = ""
     Public Property For22to31Dec As Boolean = False
+    Public Property LeaveApplID As String = ""
     Private _VD01 As String = ""
     Private _VD02 As String = ""
     Private _VD03 As String = ""
@@ -2927,8 +2928,8 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear",SqlDbType.NVarChar,5, Record.FinYear)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@MonthID",SqlDbType.Int,11, Record.MonthID)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo",SqlDbType.NVarChar,9, Record.CardNo)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD01",SqlDbType.NVarChar,3, Iif(Record.VD01= "" ,Convert.DBNull, Record.VD01))
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD02",SqlDbType.NVarChar,3, Iif(Record.VD02= "" ,Convert.DBNull, Record.VD02))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD01", SqlDbType.NVarChar, 3, IIf(Record.VD01 = "", Convert.DBNull, Record.VD01))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD02", SqlDbType.NVarChar, 3, IIf(Record.VD02 = "", Convert.DBNull, Record.VD02))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD03",SqlDbType.NVarChar,3, Iif(Record.VD03= "" ,Convert.DBNull, Record.VD03))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD04",SqlDbType.NVarChar,3, Iif(Record.VD04= "" ,Convert.DBNull, Record.VD04))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@VD05",SqlDbType.NVarChar,3, Iif(Record.VD05= "" ,Convert.DBNull, Record.VD05))
@@ -3063,6 +3064,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD05",SqlDbType.NVarChar,3, Iif(Record.PD05= "" ,Convert.DBNull, Record.PD05))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD04", SqlDbType.NVarChar, 3, IIf(Record.PD04 = "", Convert.DBNull, Record.PD04))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@For22to31Dec", SqlDbType.Bit, 3, Record.For22to31Dec)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LeaveApplID", SqlDbType.Int, 10, IIf(Record.LeaveApplID = "", Convert.DBNull, Record.LeaveApplID))
           Cmd.Parameters.Add("@Return_FinYear", SqlDbType.NVarChar, 5)
           Cmd.Parameters("@Return_FinYear").Direction = ParameterDirection.Output
           Cmd.Parameters.Add("@Return_MonthID", SqlDbType.Int, 11)
@@ -3367,6 +3369,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD05",SqlDbType.NVarChar,3, Iif(Record.PD05= "" ,Convert.DBNull, Record.PD05))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@PD04",SqlDbType.NVarChar,3, Iif(Record.PD04= "" ,Convert.DBNull, Record.PD04))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@For22to31Dec", SqlDbType.Bit, 3, Record.For22to31Dec)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LeaveApplID", SqlDbType.Int, 10, IIf(Record.LeaveApplID = "", Convert.DBNull, Record.LeaveApplID))
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1
