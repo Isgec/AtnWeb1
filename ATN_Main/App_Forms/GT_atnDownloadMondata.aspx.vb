@@ -10,9 +10,6 @@ Partial Class GT_atnDownloadMondata
   End Sub
   Private ci As System.Globalization.CultureInfo = New System.Globalization.CultureInfo("en-GB", True)
 
-  Protected Sub Jul_Click(sender As Object, e As System.EventArgs) Handles Jul.Click
-    WebPayDays(7, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
   Private Sub WebPayDays(ByVal mm As Integer, ByVal yy As Integer)
     Dim startDate As DateTime = Convert.ToDateTime("01/" & mm.ToString.PadLeft(2, "0") & "/" & yy, ci)
     Dim cutofDate As DateTime = Convert.ToDateTime("21/" & mm.ToString.PadLeft(2, "0") & "/" & yy, ci)
@@ -167,6 +164,7 @@ Partial Class GT_atnDownloadMondata
 
 
   End Sub
+
   Private Function CreateFile(ByVal oRqs As List(Of salDays)) As String
     Dim FileName As String = Server.MapPath("~/..") & "App_Temp\" & Guid.NewGuid().ToString()
     IO.File.Copy(Server.MapPath("~/App_Templates") & "\SalaryDays_Template.xlsx", FileName)
@@ -279,50 +277,10 @@ Partial Class GT_atnDownloadMondata
     Return Results
   End Function
 
-  Protected Sub Apr_Click(sender As Object, e As System.EventArgs) Handles Apr.Click
-    WebPayDays(4, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
+  Protected Sub Months_Click(sender As Object, e As System.EventArgs) Handles Jan.Click, Feb.Click, Mar.Click, Apr.Click, May.Click, Jun.Click, Jul.Click, Aug.Click, Sep.Click, Oct.Click, Nov.Click, Dec.Click
+    Dim Mon As Integer = CType(sender, Button).CommandArgument
+    WebPayDays(Mon, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
   End Sub
-
-  Protected Sub Aug_Click(sender As Object, e As System.EventArgs) Handles Aug.Click
-    WebPayDays(8, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Dec_Click(sender As Object, e As System.EventArgs) Handles Dec.Click
-    WebPayDays(12, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Feb_Click(sender As Object, e As System.EventArgs) Handles Feb.Click
-    WebPayDays(2, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Jan_Click(sender As Object, e As System.EventArgs) Handles Jan.Click
-    WebPayDays(1, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Jun_Click(sender As Object, e As System.EventArgs) Handles Jun.Click
-    WebPayDays(6, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Mar_Click(sender As Object, e As System.EventArgs) Handles Mar.Click
-    WebPayDays(3, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub May_Click(sender As Object, e As System.EventArgs) Handles May.Click
-    WebPayDays(5, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Nov_Click(sender As Object, e As System.EventArgs) Handles Nov.Click
-    WebPayDays(11, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Oct_Click(sender As Object, e As System.EventArgs) Handles Oct.Click
-    WebPayDays(10, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
-  Protected Sub Sep_Click(sender As Object, e As System.EventArgs) Handles Sep.Click
-    WebPayDays(9, SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear)
-  End Sub
-
 
   Protected Sub cmdEmp_Click(sender As Object, e As System.EventArgs) Handles cmdEmp.Click
     Dim mPage As Integer = 0
@@ -476,7 +434,6 @@ Partial Class GT_atnDownloadMondata
       End If
     End With
   End Sub
-
 End Class
 Public Class salDays
   Public Property CardNo As String = ""

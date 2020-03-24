@@ -7,6 +7,8 @@ Partial Class atnOnline
     Dim id As String = ""
     Dim val As String = ""
     Dim stopEMail As String = ""
+    Dim Task As String = ""
+    Dim TaskFound As Boolean = False
     Try
       id = Request.QueryString("id")
       val = Request.QueryString("val")
@@ -14,6 +16,10 @@ Partial Class atnOnline
       id = ""
       val = ""
     End Try
+    If Request.QueryString("Task") IsNot Nothing Then
+      TaskFound = True
+      Task = Request.QueryString("Task")
+    End If
     Try
       stopEMail = Request.QueryString("stopEMail")
     Catch ex As Exception
@@ -37,6 +43,18 @@ Partial Class atnOnline
       msg.Text = "E-Mail Request is already EXECUTED."
       msg.ForeColor = Drawing.Color.Green
     Else
+      If TaskFound Then
+        If Task = "Verify" And apl.ApplStatusID <> 2 Then
+          msg.Text = "E-Mail Request is already EXECUTED."
+          msg.ForeColor = Drawing.Color.Green
+          Exit Sub
+        End If
+        If Task = "Approve" And apl.ApplStatusID <> 3 Then
+          msg.Text = "E-Mail Request is already EXECUTED."
+          msg.ForeColor = Drawing.Color.Green
+          Exit Sub
+        End If
+      End If
       HttpContext.Current.Session("FinYear") = SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear
       If apl.ApplStatusID = 2 Then
         HttpContext.Current.Session("LoginID") = apl.VerifiedBy

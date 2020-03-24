@@ -41,7 +41,7 @@
         <td style="vertical-align:top"  >
             <asp:LinkButton ID="LinkButton1" runat="server" PostBackUrl="~/ChangePassword.aspx">Change Password</asp:LinkButton>
             <br />
-            <asp:LoginStatus ID="LoginStatus1" runat="server" Height="16px" OnLoggedOut="LoggedOut" LoginText="Sign In" LogoutAction="Redirect" LogoutPageUrl="~/Default.aspx" LogoutText="Sign Out" ToolTip="Sign Out" />
+            <asp:LoginStatus ID="LoginStatus1" runat="server" Height="16px" LoginText="Sign In" LogoutAction="Redirect" LogoutPageUrl="~/Default.aspx" LogoutText="Sign Out" ToolTip="Sign Out" />
         </td>
       </table>
     </LoggedInTemplate>

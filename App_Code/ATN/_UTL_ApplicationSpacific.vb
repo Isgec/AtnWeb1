@@ -172,59 +172,28 @@ Namespace SIS.SYS.Utilities
           .Session("OnContract") = True
         End If
 
-        'If HttpContext.Current.Session("ContractualLink") = False Then
-        '  If oEmp Is Nothing Then
-        '    System.Web.Security.FormsAuthentication.SignOut()
-        '    Try
-        '      Throw New ApplicationException("Contractual employee can not be logged in here. Pl. click on the separate link provided in Intranet.")
-        '    Catch ex As Exception
-        '      HttpContext.Current.Session("myError") = ex.Message
-        '      HttpContext.Current.Response.Redirect("~/ErrorPage.aspx")
-        '    End Try
-        '  Else
-        '    If oEmp.Contractual = True Then
-        '      System.Web.Security.FormsAuthentication.SignOut()
-        '      Try
-        '        Throw New ApplicationException("Contractual employee can not be logged in here. Pl. click on the separate link provided in Intranet.")
-        '      Catch ex As Exception
-        '        HttpContext.Current.Session("myError") = ex.Message
-        '        HttpContext.Current.Response.Redirect("~/ErrorPage.aspx")
-        '      End Try
-        '    End If
-        '  End If
-        'Else
-        '  If oEmp IsNot Nothing Then
-        '    If oEmp.Contractual = False Then
-        '      System.Web.Security.FormsAuthentication.SignOut()
-        '      Try
-        '        Throw New ApplicationException("Employee can not be logged in here. Pl. click on the separate link provided in Intranet.")
-        '      Catch ex As Exception
-        '        HttpContext.Current.Session("myError") = ex.Message
-        '        HttpContext.Current.Response.Redirect("~/ErrorPage.aspx")
-        '      End Try
-        '    End If
-        '  Else
-
-        '  End If
-        'End If
 
       End With
     End Sub
     Public Shared ReadOnly Property LastProcessedDate() As String
       Get
-        Dim _Result As DateTime
+        Dim _Result As String = ""
         Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString)
           Using Cmd As SqlCommand = Con.CreateCommand()
-            'Dim mSql As String = "SELECT MAX([ATN_ProcessPunch].[ProcessDate]) FROM [ATN_ProcessPunch] WHERE [ATN_ProcessPunch].[FinYear] = " & HttpContext.Current.Session("FinYear")
-            Dim mSql As String = "SELECT MAX([ATN_Attendance].[AttenDate]) FROM [ATN_Attendance] WHERE [ATN_Attendance].[FinYear] = " & HttpContext.Current.Session("FinYear")
+            Dim mSql As String = "SELECT ISNULL(MAX([ATN_Attendance].[AttenDate]),'') FROM [ATN_Attendance] WHERE advanceapplication=0 and applied=0 And [ATN_Attendance].[FinYear] = " & HttpContext.Current.Session("FinYear")
             Cmd.CommandType = System.Data.CommandType.Text
             Cmd.CommandText = mSql
             Con.Open()
             _Result = Cmd.ExecuteScalar()
+            If _Result = "" Then
+              _Result = "01/01/" & HttpContext.Current.Session("FinYear")
+            Else
+              _Result = Convert.ToDateTime(_Result).ToString("dd/MM/yyyy")
+            End If
           End Using
         End Using
-        Return Now.AddDays(-1).ToString("dd/MM/yyyy")
-        Return _Result.ToString("dd/MM/yyyy")
+        'Return Now.AddDays(-1).ToString("dd/MM/yyyy")
+        Return _Result
       End Get
     End Property
     Public Shared Function LastWorkingDateForFP(ByVal CardNo As String, ByVal Days As Integer) As DateTime
@@ -315,15 +284,6 @@ Namespace SIS.SYS.Utilities
     End Property
     Public Shared Function ActivePunchConfig(ByVal ProcessingDate As DateTime, ByVal OfficeID As String) As Integer
       Dim _Result As Integer = 0
-      'Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString)
-      '	Using Cmd As SqlCommand = Con.CreateCommand()
-      '		Dim mSql As String = "SELECT TOP 1 [ATN_PunchConfig].[RecordID] FROM [ATN_PunchConfig] WHERE (convert(datetime,'" & ProcessingDate & "',103) BETWEEN ActiveFrom AND ActiveTill) AND '" & OfficeID & "' in (LocationList) AND [ATN_PunchConfig].[FinYear] = " & Global.System.Web.HttpContext.Current.Session("FinYear")
-      '		Cmd.CommandType = System.Data.CommandType.Text
-      '		Cmd.CommandText = mSql
-      '		Con.Open()
-      '		_Result = Cmd.ExecuteScalar()
-      '	End Using
-      'End Using
       _Result = 6
       If ProcessingDate > Convert.ToDateTime("06/09/2015") Then
         _Result = "7"

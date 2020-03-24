@@ -35,7 +35,8 @@ Partial Class GD_atnAlertToUser
             mStr = mStr & "<tr><td style=""padding-top: 10px"">Thanx.</td></tr>"
             mStr = mStr & "<tr><td style=""padding-top: 10px"">(for further queries contact HR.)</td></tr>"
             mStr = mStr & "</table>"
-            .Body = mStr
+            .Body = "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
+            .Body &= mStr
           End With
           oClient.Send(oMsg)
 

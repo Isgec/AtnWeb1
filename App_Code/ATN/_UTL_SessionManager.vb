@@ -8,6 +8,16 @@ Imports System.Text
 Imports System.Security.Cryptography
 Namespace SIS.SYS.Utilities
   Public Class SessionManager
+    Public Shared Function DoLogin(ByVal UserID As String) As Boolean
+      Dim mRet As Boolean = False
+      If Membership.ValidateUser(UserID, GetPassword(UserID)) Then
+        FormsAuthentication.RedirectFromLoginPage(UserID, True)
+        SIS.SYS.Utilities.SessionManager.InitializeEnvironment(UserID)
+        mRet = True
+      End If
+      Return mRet
+    End Function
+
     Public Shared Sub CreateSessionEnvironement()
       With HttpContext.Current
         .Session("ApplicationID") = 0

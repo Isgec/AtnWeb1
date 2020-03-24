@@ -416,12 +416,12 @@ Namespace SIS.ATN
           .AppendLine("<tr><td><b>Reason</b></td>")
           .AppendLine("<td>" & apl.Remarks & "</td></tr>")
           mLinkID = SIS.SYS.Utilities.ApplicationSpacific.NextLinkNo
-          .AppendLine("<tr><td style='font-weight:bold;text-align:center;font-size:12px;background-color:#66FF33'><a style='color:green' href='http://cloud.isgec.co.in/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Approved & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>" & aplWord & "</a></td>")
+          .AppendLine("<tr><td style='font-weight:bold;text-align:center;font-size:12px;background-color:#66FF33'><a style='color:green' href='http://cloud.isgec.co.in/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Approved & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "&Task=" & aplWord & "'>" & aplWord & "</a></td>")
           .AppendLine("<td style='font-weight:bold;text-align:center;font-size:12px;background-color:#FF99CC'><a style='color:red' href='http://cloud.isgec.co.in/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Rejected & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>Reject</a></td></tr>")
 
           .AppendLine("<tr><td colspan=""2"" align=""center""><p>Above links are for Mobile users (Blackberry/Smartphone).</p><p>If you are on your computer or connected to office Network through VPN, Please use links given below.</p></td></tr>")
 
-          .AppendLine("<tr><td style='text-align:center'><a style='color:green' href='http://192.9.200.146/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Approved & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>" & aplWord & "</a></td>")
+          .AppendLine("<tr><td style='text-align:center'><a style='color:green' href='http://192.9.200.146/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Approved & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "&Task=" & aplWord & "'>" & aplWord & "</a></td>")
           .AppendLine("<td style='text-align:center'><a style='color:red' href='http://192.9.200.146/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Rejected & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>Reject</a></td></tr>")
 
           .AppendLine("<tr><td colspan='2' style='font-style:italic'>This is auto generated E-Mail, DO NOT REPLY.</td></tr>")
@@ -448,6 +448,7 @@ Namespace SIS.ATN
           Header = Header & "</style>"
           Header = Header & "</head>"
           Header = Header & "<body>"
+          Header &= "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
           Header = Header & sb.ToString
           Header = Header & "</body></html>"
           oMsg.Body = Header
@@ -580,6 +581,7 @@ Namespace SIS.ATN
         Header = Header & "</style>"
         Header = Header & "</head>"
         Header = Header & "<body>"
+        Header &= "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
         Header = Header & sb.ToString
         Header = Header & "</body></html>"
         oMsg.Body = Header

@@ -18,7 +18,8 @@ Partial Class GD_atnAlertToApprover
     Dim oMsg As New System.Net.Mail.MailMessage
     With oMsg
       .To.Add(aVals(1))
-      .Body = aVals(2)
+      .Body = "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
+      .Body &= aVals(2)
       .Subject = "Pending Leave Application(s)"
     End With
     oClient.Send(oMsg)

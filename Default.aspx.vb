@@ -1,20 +1,9 @@
-Imports System
-Imports System.Collections.Generic
-Imports System.Data
-Imports System.Data.SqlClient
-Imports System.ComponentModel
-Imports System.Web.Services
 Imports System.IO
-Imports System.Web.Security
-Imports System.ServiceModel
-Imports System.Runtime.Serialization
-Imports System.Web.ApplicationServices
-Imports System.Security.Principal
 
 Partial Class LGDefault
-  Inherits System.Web.UI.Page
-  <System.Web.Services.WebMethod()> _
-  <System.Web.Script.Services.ScriptMethod()> _
+    Inherits System.Web.UI.Page
+  <System.Web.Services.WebMethod()>
+  <System.Web.Script.Services.ScriptMethod()>
   Public Shared Function LoadUserControl(ByVal message As String) As String
     Using page As New Page()
       Dim userControl As UserControl = DirectCast(page.LoadControl("Message.ascx"), UserControl)
@@ -27,10 +16,92 @@ Partial Class LGDefault
       End Using
     End Using
   End Function
-  Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+
+  'Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+  '      Dim strPara As String = ""
+  '      Dim cnt As Boolean = False
+  '      Dim uVal As String = "1"
+  '      If Request.QueryString("wpid") IsNot Nothing Then
+  '          strPara = Request.QueryString("wpid")
+  '      End If
+  '      If Request.QueryString("cnt") IsNot Nothing Then
+  '          cnt = True
+  '      End If
+  '      If Request.QueryString("uVal") IsNot Nothing Then
+  '          uVal = Request.QueryString("uVal")
+  '      End If
+  '      Dim strUser As String = ""
+  '      If strPara <> String.Empty Then
+  '          Using Con As System.Data.SqlClient.SqlConnection = New System.Data.SqlClient.SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString)
+  '              Using Cmd As System.Data.SqlClient.SqlCommand = Con.CreateCommand()
+  '                  Dim mSql As String = "select LoginID from aspnet_users where wp_user = '" & strPara & "'"
+  '                  Cmd.CommandType = System.Data.CommandType.Text
+  '                  Cmd.CommandText = mSql
+  '                  Con.Open()
+  '                  strUser = Cmd.ExecuteScalar()
+  '                  Try
+  '                      If strUser Is Nothing Then
+  '                          strUser = ""
+  '                      End If
+  '                  Catch ex As Exception
+  '                      strUser = ""
+  '                  End Try
+  '              End Using
+  '              If strUser <> String.Empty Then
+  '                  Using Cmd As System.Data.SqlClient.SqlCommand = Con.CreateCommand()
+  '                      Dim mSql As String = "update aspnet_users set wp_user = '' where LoginID = '" & strUser & "'"
+  '                      Cmd.CommandType = System.Data.CommandType.Text
+  '                      Cmd.CommandText = mSql
+  '                      Cmd.ExecuteNonQuery()
+  '                  End Using
+  '              End If
+  '          End Using
+  '          If strUser IsNot Nothing Then
+  '              If strUser <> String.Empty Then
+  '                  Dim pw As String = ""
+  '                  Try
+  '                      pw = SIS.SYS.Utilities.SessionManager.GetPassword(strUser)
+  '                      If Membership.ValidateUser(strUser, pw) Then
+  '                          Dim isPersistent As Boolean = True
+  '                          Dim userData As String = "ApplicationSpecific data for this user."
+  '                          Dim ticket As FormsAuthenticationTicket = New FormsAuthenticationTicket(1,
+  '                            strUser,
+  '                            DateTime.Now,
+  '                            DateTime.Now.AddMinutes(30),
+  '                            isPersistent,
+  '                            userData,
+  '                          FormsAuthentication.FormsCookiePath)
+  '                          ' Encrypt the ticket.
+  '                          Dim encTicket As String = FormsAuthentication.Encrypt(ticket)
+  '                          ' Create the cookie.
+  '                          Response.Cookies.Add(New HttpCookie(FormsAuthentication.FormsCookieName, encTicket))
+  '                          Dim x As HttpCookie = Response.Cookies.Get(0)
+  '                          x.Values.Add("SameSite", "None")
+  '                          x.Secure = True
+  '                          SIS.SYS.Utilities.SessionManager.InitializeEnvironment(Page.User.Identity.Name)
+  '                          'Redirect back to original URL.
+  '                          HttpContext.Current.Session("Redirected") = True
+  '                          'HttpContext.Current.Session("ApplicationDefaultPage") = "http://192.9.200.169/Webpay/Empuser/default.htm"
+  '                          'Response.Redirect(FormsAuthentication.GetRedirectUrl(strUser, isPersistent))
+  '                          If Not cnt Then
+  '                              Response.Redirect("http://192.9.200.169/Webpay/Empuser/atnweb.aspx?cnt=1&uVal=" & uVal)
+  '                          End If
+  '                          If uVal = "2" Then
+  '                              Response.Redirect("~/TA_Main/App_Forms/GF_taTPUserInvoicing.aspx")
+  '                          End If
+  '                      End If
+  '                  Catch ex As Exception
+  '                  End Try
+  '              End If
+  '          End If
+  '      End If
+  '  End Sub
+  Public Property abcd As String = ""
+  Protected Sub Page_PreRender(sender As Object, e As System.EventArgs) Handles Me.PreRender
     Dim strPara As String = ""
     Dim cnt As Boolean = False
     Dim uVal As String = "1"
+    Dim strUser As String = ""
     If Request.QueryString("wpid") IsNot Nothing Then
       strPara = Request.QueryString("wpid")
     End If
@@ -40,71 +111,28 @@ Partial Class LGDefault
     If Request.QueryString("uVal") IsNot Nothing Then
       uVal = Request.QueryString("uVal")
     End If
-    Dim strUser As String = ""
     If strPara <> String.Empty Then
       Using Con As System.Data.SqlClient.SqlConnection = New System.Data.SqlClient.SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString)
         Using Cmd As System.Data.SqlClient.SqlCommand = Con.CreateCommand()
-          Dim mSql As String = "select LoginID from aspnet_users where wp_user = '" & strPara & "'"
           Cmd.CommandType = System.Data.CommandType.Text
-          Cmd.CommandText = mSql
+          Cmd.CommandText = "select isnull(LoginID,'') as xx from aspnet_users where wp_user = '" & strPara & "'"
           Con.Open()
           strUser = Cmd.ExecuteScalar()
-          Try
-            If strUser Is Nothing Then
-              strUser = ""
-            End If
-          Catch ex As Exception
-            strUser = ""
-          End Try
         End Using
         If strUser <> String.Empty Then
           Using Cmd As System.Data.SqlClient.SqlCommand = Con.CreateCommand()
-            Dim mSql As String = "update aspnet_users set wp_user = '' where LoginID = '" & strUser & "'"
             Cmd.CommandType = System.Data.CommandType.Text
-            Cmd.CommandText = mSql
+            Cmd.CommandText = "update aspnet_users set wp_user = '' where LoginID = '" & strUser & "'"
             Cmd.ExecuteNonQuery()
           End Using
         End If
       End Using
-      If strUser IsNot Nothing Then
-        If strUser <> String.Empty Then
-          Dim pw As String = ""
-          Try
-            pw = SIS.SYS.Utilities.SessionManager.GetPassword(strUser)
-            If Membership.ValidateUser(strUser, pw) Then
-              Dim isPersistent As Boolean = True
-              Dim userData As String = "ApplicationSpecific data for this user."
-              Dim ticket As FormsAuthenticationTicket = New FormsAuthenticationTicket(1, _
-                strUser, _
-                DateTime.Now, _
-                DateTime.Now.AddMinutes(30), _
-                isPersistent, _
-                userData, _
-                FormsAuthentication.FormsCookiePath)
-              ' Encrypt the ticket.
-              Dim encTicket As String = FormsAuthentication.Encrypt(ticket)
-              ' Create the cookie.
-              Response.Cookies.Add(New HttpCookie(FormsAuthentication.FormsCookieName, encTicket))
-              SIS.SYS.Utilities.SessionManager.InitializeEnvironment(Page.User.Identity.Name)
-              'Redirect back to original URL.
-              HttpContext.Current.Session("Redirected") = True
-              'HttpContext.Current.Session("ApplicationDefaultPage") = "http://192.9.200.169/Webpay/Empuser/default.htm"
-              'Response.Redirect(FormsAuthentication.GetRedirectUrl(strUser, isPersistent))
-              If Not cnt Then
-                Response.Redirect("http://192.9.200.169/Webpay/Empuser/atnweb.aspx?cnt=1&uVal=" & uVal)
-              End If
-              If uVal = "2" Then
-                Response.Redirect("~/TA_Main/App_Forms/GF_taTPUserInvoicing.aspx")
-              End If
-            End If
-          Catch ex As Exception
-          End Try
+      If strUser <> "" Then
+        If SIS.SYS.Utilities.SessionManager.DoLogin(strUser) Then
         End If
       End If
     End If
-  End Sub
-  Public Property abcd As String = ""
-  Protected Sub Page_PreRender(sender As Object, e As System.EventArgs) Handles Me.PreRender
+
     If Page.User.Identity.IsAuthenticated Then
       abcd = "<fieldset class='ui-widget-content wp_page'>"
       abcd &= "<legend>"
