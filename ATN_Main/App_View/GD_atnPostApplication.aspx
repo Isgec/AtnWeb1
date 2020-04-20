@@ -94,19 +94,19 @@
     </asp:UpdateProgress>
     <asp:GridView runat="server"  SkinId="gv_silver" ID="GridView1" Width="100%" AllowPaging="True" AllowSorting="True" AutoGenerateColumns="False" DataSourceID="ObjectDataSource1" DataKeyNames="LeaveApplID">
       <Columns>
-        <asp:TemplateField>
+        <asp:TemplateField HeaderText="INFO">
           <ItemTemplate>
 						<input type="image" id='<%#Eval("LeaveApplID","cmdInfo{0}") %>' alt='<%# Eval("LeaveApplID") %>' title="Detailed Information." src="../../App_Themes/Default/Images/Info.png" onclick="showDetails(this);return false;" />
           </ItemTemplate>
           <HeaderStyle Width="30px" />
+          <ItemStyle CssClass="alignCenter" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="ID" SortExpression="LeaveApplID">
           <ItemTemplate>
             <asp:Label ID="LabelLeaveApplID" runat="server" Text='<%# Bind("LeaveApplID") %>'></asp:Label>
           </ItemTemplate>
-          <HeaderStyle CssClass="alignright" />
-          <ItemStyle CssClass="alignright" />
           <HeaderStyle Width="40px" />
+          <ItemStyle CssClass="alignCenter" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Employee" SortExpression="HRM_Employees1_EmployeeName">
           <ItemTemplate>
@@ -130,7 +130,8 @@
           <ItemTemplate>
             <asp:Label ID="LabelAppliedOn" runat="server" Text='<%# Bind("AppliedOn") %>'></asp:Label>
           </ItemTemplate>
-        <HeaderStyle Width="80px" />
+          <HeaderStyle Width="80px" />
+          <ItemStyle CssClass="alignCenter" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Approved By" SortExpression="HRM_Employees1_ApproverID">
           <ItemTemplate>
@@ -148,13 +149,15 @@
           <ItemTemplate>
 						<asp:ImageButton ID="Posted" runat="server" ToolTip="Click to Post" ImageUrl="~/App_Themes/Default/Images/docok.png"  CommandName="Posted" CommandArgument='<%# Container.DataItemIndex %>'  />
           </ItemTemplate>
-        <HeaderStyle Width="50px" />
+          <HeaderStyle Width="40px" />
+          <ItemStyle CssClass="alignCenter" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Reject">
           <ItemTemplate>
 						<asp:ImageButton ID="Rejected" runat="server" ToolTip="Click to Reject" ImageUrl="~/App_Themes/Default/Images/docreject.png" CommandName="Rejected" CommandArgument='<%# Container.DataItemIndex %>'/>
           </ItemTemplate>
-        <HeaderStyle Width="50px" />
+          <HeaderStyle Width="40px" />
+          <ItemStyle CssClass="alignCenter" />
         </asp:TemplateField>
       </Columns>
       <EmptyDataTemplate>

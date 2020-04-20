@@ -48,8 +48,10 @@ Partial Class GD_atnPostApplication
 			GridView1.DataBind()
 		End If
 	End Sub
+  Private st As Long = HttpContext.Current.Server.ScriptTimeout
 
   Protected Sub cmdPostAll_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdPostAll.Click
+    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
     Dim mStart As Integer = 0
     Dim mRows As Integer = 20
     Try
@@ -67,5 +69,6 @@ Partial Class GD_atnPostApplication
       'mStart += mRows
       'oApls = SIS.ATN.atnPostApplication.SelectList(mStart, mRows, "", False, "", "")
     Loop
+    HttpContext.Current.Server.ScriptTimeout = st
   End Sub
 End Class

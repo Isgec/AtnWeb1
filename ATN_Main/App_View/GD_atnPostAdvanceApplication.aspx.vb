@@ -47,4 +47,24 @@ Partial Class GD_atnPostAdvanceApplication
       GridView1.DataBind()
     End If
   End Sub
+  Private st As Long = HttpContext.Current.Server.ScriptTimeout
+
+  Protected Sub cmdPostAll_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdPostAll.Click
+    HttpContext.Current.Server.ScriptTimeout = Integer.MaxValue
+    Dim mStart As Integer = 0
+    Dim mRows As Integer = 20
+    Try
+      mRows = Convert.ToInt32(F_PostCount.Text)
+    Catch ex As Exception
+      mRows = 20
+    End Try
+    Dim oApls As List(Of SIS.ATN.atnPostAdvanceApplication) = SIS.ATN.atnPostAdvanceApplication.SelectList(mStart, mRows, "", False, "", "")
+    If oApls.Count > 0 Then
+      For Each oApl As SIS.ATN.atnPostAdvanceApplication In oApls
+        SIS.ATN.atnApplHeader.ForwardApplication(oApl.LeaveApplID, "Posted by bulk processing")
+      Next
+      GridView1.DataBind()
+    End If
+    HttpContext.Current.Server.ScriptTimeout = st
+  End Sub
 End Class
