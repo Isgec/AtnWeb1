@@ -104,8 +104,9 @@
 							Pnl.ID = "±GG±" & strStartdate
 							Pnl.BorderColor = Drawing.Color.Pink
 							Pnl.BorderStyle = BorderStyle.Solid
-							Pnl.BorderWidth = 1
-							Pnl.Height = 100
+              Pnl.BorderWidth = 1
+              Pnl.BackColor = Drawing.Color.LightYellow
+              Pnl.Height = 100
 							Pnl.Style("padding-top") = "4px"
 							Dim tTbl As New Table
 							Dim trow As TableRow = Nothing
@@ -124,9 +125,9 @@
 							Txt = New TextBox
 							Txt.ID = "±HH±" & strStartdate
 							Txt.Width = 100
-							Txt.MaxLength = 30
-							Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
-							tcol.Controls.Add(Txt)
+              Txt.MaxLength = 50
+              Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
+              tcol.Controls.Add(Txt)
 							trow.Cells.Add(tcol)
 
 							tTbl.Rows.Add(trow)
@@ -141,13 +142,13 @@
 
 
 							tcol = New TableCell
-							Txt = New TextBox
-							Txt.ID = "±II±" & strStartdate
+              Txt = New TextBox
+              Txt.ID = "±II±" & strStartdate
 							Txt.Width = 200
 							Txt.Height = 40
 							Txt.TextMode = TextBoxMode.MultiLine
-							Txt.MaxLength = 250
-							Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
+              Txt.Attributes.Add("onkeypress", "if (this.value.length > 249) { return false; }")
+              Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
 							tcol.Controls.Add(Txt)
 							trow.Cells.Add(tcol)
 

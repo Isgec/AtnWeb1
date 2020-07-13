@@ -13,8 +13,8 @@ Namespace SIS.ATN
 					Cmd.CommandText = "spatn_LG_HolidaysByDate"
 					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Holiday", SqlDbType.DateTime, 21, Holiday)
 					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OfficeID", SqlDbType.Int, 10, OfficeID)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
-					Con.Open()
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear)
+          Con.Open()
 					Dim Reader As SqlDataReader = Cmd.ExecuteReader()
 					If Reader.Read() Then
 						Results = New SIS.ATN.atnHolidays(Reader)

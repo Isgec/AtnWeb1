@@ -887,7 +887,7 @@ Namespace SIS.ATN
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spnewHrmEmployeesSelectByID"
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, CardNo.ToString.Length, CardNo)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, HttpContext.Current.Session("LoginID"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NVarChar, 9, "")
           Con.Open()
           Dim Reader As SqlDataReader = Cmd.ExecuteReader()
           If Reader.Read() Then

@@ -1,4 +1,6 @@
 Imports System.IO
+Imports OfficeOpenXml
+Imports System.Web.Script.Serialization
 
 Partial Class LGDefault
     Inherits System.Web.UI.Page
@@ -134,6 +136,7 @@ Partial Class LGDefault
     End If
 
     If Page.User.Identity.IsAuthenticated Then
+      cmdRooster.Visible = True
       abcd = "<fieldset class='ui-widget-content wp_page'>"
       abcd &= "<legend>"
       abcd &= "    <span>&nbsp;TODAY's Punch Time</span>"
@@ -159,6 +162,7 @@ Partial Class LGDefault
       str &= "|~/ATN_Main/App_Reports/GP_atnPrintLeavecard.aspx|Leave Card"
       str &= "|~/ATN_Main/App_View/GD_atnRules.aspx|Leave Rules"
       str &= "|~/TA_Main/App_Forms/GF_taTPUserInvoicing.aspx|Travel Invoice"
+      str &= "|~/WFHRoster.aspx|Update WFH"
 
       str = str.Replace("~", HttpContext.Current.Request.Url.Scheme & Uri.SchemeDelimiter & HttpContext.Current.Request.Url.Authority & HttpContext.Current.Request.ApplicationPath)
       Dim astr() As String = str.Split("|".ToCharArray)
@@ -183,5 +187,8 @@ Partial Class LGDefault
       Next
       abcd &= "</ul>"
     End If
+  End Sub
+  Protected Sub cmdRooster_Click(sender As Object, e As EventArgs)
+    Response.Redirect("~/WFHRoster.aspx")
   End Sub
 End Class

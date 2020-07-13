@@ -370,7 +370,26 @@ Namespace SIS.SYS.Utilities
             SIS.ATN.atnNewAttendance.Update(oAtnd)
             Return  '**********
           End If
-          '2.
+          '2. WFH
+          Dim oWFH As SIS.ATN.WFHRooster = SIS.ATN.WFHRooster.GetByCardDate(oAtnd.CardNo, oAtnd.AttenDate)
+          If oWFH IsNot Nothing Then
+            If oWFH.WFHFullDay Then
+              With oAtnd
+                .Punch1Time = 0
+                .Punch2Time = 0
+                .PunchStatusID = "PR"
+                .PunchValue = 1
+                .FinalValue = 1
+                .NeedsRegularization = False
+                .FirstPunchMachine = ""
+                .SecondPunchMachine = ""
+                .ApplStatusID = 10
+              End With
+              SIS.ATN.atnNewAttendance.Update(oAtnd)
+              Return   '**********
+            End If
+          End If
+          '3.
           If Not oPunchReq Is Nothing Then
             If oPunchReq.NoPunch Then
               With oAtnd
@@ -387,7 +406,7 @@ Namespace SIS.SYS.Utilities
               Return  '**********
             End If
           End If
-          '3.
+          '4.
           If oRaw Is Nothing Then
             With oAtnd
               If OfficeID = 6 Then
