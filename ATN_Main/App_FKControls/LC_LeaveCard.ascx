@@ -20,4 +20,4 @@
     	}
     </script>
     
-    <asp:Label ID="CTL_LeaveCard" runat="server" ToolTip="" onclick="showLeaveCard('');return false;" ForeColor="MediumPurple" style="border: solid 1pt MediumPurple; background-color:Silver; cursor:help" Font-Bold="true" Text="LEAVE CARD"></asp:Label>
+    <asp:Label ID="CTL_LeaveCard" runat="server" ToolTip="Click to view Leave card." onclick="showLeaveCard('');return false;" style="border:solid 1pt #940303;padding:6px; border-radius:8px; background-color:#e20101; color:white; cursor:pointer;font-weight:bold;font-size:14px;" Text="LEAVE CARD"></asp:Label>

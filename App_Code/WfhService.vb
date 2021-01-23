@@ -158,5 +158,28 @@ Public Class WfhService
     jxx.MaxJsonLength = Integer.MaxValue
     Return jxx.Serialize(x)
   End Function
+#Region " LoadHist "
+  <WebMethod(EnableSession:=True)>
+  Public Function LoadHist(ByVal context As String) As String
+    If Not ValidateSession() Then Return SessionExpired()
+
+    Dim User As String = ""
+    Dim AttenDate As String = ""
+
+    Dim aCon As String() = context.Split("_".ToCharArray)
+    If aCon.Count > 2 Then
+      'aCon(0) = "hd"
+      AttenDate = aCon(1)
+      User = aCon(2)
+    End If
+    Dim Active As Boolean = False
+    Dim x As New SIS.ATN.wResp
+    x.hst = SIS.ATN.histEmp.GetHist(User, AttenDate)
+    Dim jxx As New JavaScriptSerializer()
+    jxx.MaxJsonLength = Integer.MaxValue
+    Dim tmp As String = jxx.Serialize(x)
+    Return tmp
+  End Function
+#End Region
 
 End Class

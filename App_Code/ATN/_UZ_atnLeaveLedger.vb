@@ -603,8 +603,16 @@ Namespace SIS.ATN
 		Private _Description As String = String.Empty
 		Private _AdvanceApplicable As Boolean = False
 		Private _MonthlyOpening As Boolean = False
-		Private _MonthlyData As List(Of lgMonthlyLedgerBalance) = Nothing
-		Public Property OBALApplicable() As Boolean
+    Private _MonthlyData As List(Of lgMonthlyLedgerBalance) = Nothing
+    Public Property IsOutOfPolicy As Boolean = False
+
+    Public ReadOnly Property IsZero As Boolean
+      Get
+        If OpeningBalance = 0 AndAlso InProcess = 0 AndAlso Availed = 0 AndAlso Balance = 0 AndAlso ClosingBalance = 0 Then Return True
+        Return False
+      End Get
+    End Property
+    Public Property OBALApplicable() As Boolean
 			Get
 				Return _OBALApplicable
 			End Get
@@ -725,26 +733,35 @@ Namespace SIS.ATN
 					CardNo = HttpContext.Current.Session("LoginID")
 				End If
 			End If
+      Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(CardNo)
+      Dim newRule2021 As Boolean = False
+      If Convert.ToInt32(oEmp.C_OfficeID) <> enumOffices.Site And Convert.ToInt32(FinYear) >= 2021 Then
+        newRule2021 = True
+      End If
 
-			'Create All Leave Objects
-			Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence")
-			For Each _lt As SIS.ATN.atnLeaveTypes In oLTs
-				Dim _Bal As lgLedgerBalance = New lgLedgerBalance
-				With _Bal
-					.LeaveType = _lt.LeaveTypeID
-					.Description = _lt.Description
-					.AdvanceApplicable = _lt.AdvanceApplicable
-					If _lt.OBALMonthly Then
-						.MonthlyOpening = True
-						.OpeningBalance = _lt.OpeningBalance
-						.MonthlyData = New List(Of lgMonthlyLedgerBalance)
-					End If
-				End With
-				oBals.Add(_Bal)
-			Next
-			'======================
-			'Update from Transactions
-			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+      'Create All Leave Objects
+      Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence")
+      For Each _lt As SIS.ATN.atnLeaveTypes In oLTs
+        If _lt.Description = "" Then Continue For
+
+        Dim _Bal As lgLedgerBalance = New lgLedgerBalance
+        With _Bal
+          If newRule2021 Then If (Not _lt.ApplyiableOffice) Then _Bal.IsOutOfPolicy = True
+          If Not newRule2021 Then If (Not _lt.Applyiable) Then _Bal.IsOutOfPolicy = True
+          .LeaveType = _lt.LeaveTypeID
+          .Description = _lt.Description
+          .AdvanceApplicable = _lt.AdvanceApplicable
+          If _lt.OBALMonthly Then
+            .MonthlyOpening = True
+            .OpeningBalance = _lt.OpeningBalance
+            .MonthlyData = New List(Of lgMonthlyLedgerBalance)
+          End If
+        End With
+        oBals.Add(_Bal)
+      Next
+      '======================
+      'Update from Transactions
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
 				Using Cmd As SqlCommand = Con.CreateCommand()
 					Cmd.CommandType = CommandType.Text
 					Cmd.CommandText = "SELECT * FROM ATNv_LedgerBalance WHERE CardNo = '" & CardNo & "' AND FinYear = '" & FinYear & "'"
@@ -1106,156 +1123,237 @@ Namespace SIS.ATN
       Dim CategoryID As Integer = SIS.SYS.Utilities.BalanceTransfer.GetCategoryID(CardNo)
 
       Dim oFyr As SIS.ATN.atnFinYear = SIS.ATN.atnFinYear.GetByID(Convert.ToDateTime(oEmp.C_DateOfReleaving, ci).Year)
-      If Convert.ToDateTime(oEmp.C_DateOfReleaving, ci) <= Convert.ToDateTime(oFyr.EndDate, ci) Then
-        Dim opbPL As Decimal = 24
-        Dim opbLT As Decimal = 6
-        If oEmp.C_DesignationID = "34" Or oEmp.C_DesignationID = "35" Or oEmp.C_DesignationID = "28" Then
-          opbPL = 15
-          opbLT = 0
-        ElseIf oEmp.C_OfficeID = "6" Then
-          opbPL = 30
-          opbLT = 0
-        ElseIf CategoryID = 19 Then
-          opbPL = 15
-          opbLT = 0
-        ElseIf CategoryID = 18 Then
-          opbPL = 30
-          opbLT = 0
-        End If
+      Dim newRule As Boolean = False
+      If oEmp.C_OfficeID <> 6 And oFyr.FinYear >= "2021" Then newRule = True
 
-        'Calculate Leave Balances
-        Dim EmpTDays As Integer = 0
-        Dim EmpPTDays As Integer = 0
-        Dim YrDays As Integer = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oFyr.EndDate, ci))
-        If Convert.ToDateTime(oEmp.C_DateOfJoining, ci) <= Convert.ToDateTime(oFyr.StartDate, ci) Then
-          EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
-          EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
-        Else
-          EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
-          EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+      If newRule Then
+        Dim opbPL As Decimal = 0
+        Dim opbLT As Decimal = 0
+        '1. Reset Opening Valanve
+        If Convert.ToDateTime(oEmp.C_DateOfReleaving, ci) <= Convert.ToDateTime(oFyr.EndDate, ci) Then
+          opbPL = 24
+          opbLT = 6
+          If oEmp.C_DesignationID = "34" Or oEmp.C_DesignationID = "35" Or oEmp.C_DesignationID = "28" Then
+            opbPL = 15
+            opbLT = 5
+          ElseIf CategoryID = 19 Then
+            opbPL = 15
+            opbLT = 5
+          ElseIf CategoryID = 18 Then
+            opbPL = 15
+            opbLT = 5
+          End If
+          If oEmp.Contractual Then
+            opbPL = 16
+            opbLT = 0
+          End If
+          Dim EmpTDays As Integer = 0
+          Dim EmpPTDays As Integer = 0
+          Dim YrDays As Integer = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oFyr.EndDate, ci))
+          If Convert.ToDateTime(oEmp.C_DateOfJoining, ci) <= Convert.ToDateTime(oFyr.StartDate, ci) Then
+            EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+            EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+          Else
+            EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+            EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+          End If
+          Dim xx As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z1")
+          opbPL = LvRoundof((opbPL / YrDays) * EmpPTDays)
+          xx.OpeningBalance = opbPL
+          opbLT = LvRoundof((opbLT / YrDays) * EmpPTDays)
         End If
+        '2. Calc
+        Dim z1 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z1")
+        Dim z2 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z2")
+        Dim z3 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z3")
+        Dim z4 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z4")
+        Dim z5 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z5")
+        Dim z6 As lgLedgerBalance = oBals.Find(Function(x) x.LeaveType = "Z6")
+        Dim totC As Decimal = z1.Balance + z2.Balance
+        Dim totNC As Decimal = opbLT + z3.Balance + z4.Balance + z5.Balance
+        Dim adj As Decimal = 0
+        If z6.Balance * (-1) > totNC Then
+          adj = z6.Balance - totNC
+        End If
+        For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+          Select Case tmp.LeaveType
+            Case "Z3", "Z4", "Z5"
+              tmp.OpeningBalance = 0
+              tmp.Availed = 0
+              tmp.InProcess = 0
+            Case "Z6"
+              tmp.Availed = adj
+              tmp.InProcess = 0
+          End Select
+        Next
+        'Remove Other Leave Types
+        For I As Integer = oBals.Count - 1 To 0 Step -1
+          Dim lgb As SIS.ATN.lgLedgerBalance = oBals(I)
+          Select Case lgb.LeaveType
+            Case "Z1", "Z2"
+            Case "Z6"
+              If lgb.Balance >= 0 Then
+                oBals.Remove(lgb)
+              End If
+            Case Else
+              oBals.Remove(lgb)
+          End Select
+        Next
+
+        '=============
+      Else 'New Rule
+        '=============
+        If Convert.ToDateTime(oEmp.C_DateOfReleaving, ci) <= Convert.ToDateTime(oFyr.EndDate, ci) Then
+          Dim opbPL As Decimal = 24
+          Dim opbLT As Decimal = 6
+          If oEmp.C_DesignationID = "34" Or oEmp.C_DesignationID = "35" Or oEmp.C_DesignationID = "28" Then
+            opbPL = 15
+            opbLT = 0
+          ElseIf oEmp.C_OfficeID = "6" Then
+            opbPL = 30
+            opbLT = 0
+          ElseIf CategoryID = 19 Then
+            opbPL = 15
+            opbLT = 0
+          ElseIf CategoryID = 18 Then
+            opbPL = 30
+            opbLT = 0
+          End If
+
+          'Calculate Leave Balances
+          Dim EmpTDays As Integer = 0
+          Dim EmpPTDays As Integer = 0
+          Dim YrDays As Integer = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oFyr.EndDate, ci))
+          If Convert.ToDateTime(oEmp.C_DateOfJoining, ci) <= Convert.ToDateTime(oFyr.StartDate, ci) Then
+            EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+            EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oFyr.StartDate, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+          Else
+            EmpTDays = 1 + DateDiff(DateInterval.Day, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+            EmpPTDays = GetPresentDaysByCardNoDate(CardNo, Convert.ToDateTime(oEmp.C_DateOfJoining, ci), Convert.ToDateTime(oEmp.C_DateOfReleaving, ci))
+          End If
+          For Each lgb As SIS.ATN.lgLedgerBalance In oBals
+            If lgb.LeaveType = "CL" Then
+              If lgb.OpeningBalance > 0 Then
+                lgb.OpeningBalance = LvRoundof((7 / YrDays) * EmpTDays)
+              End If
+            End If
+            If lgb.LeaveType = "SL" Then
+              If lgb.OpeningBalance > 0 Then
+                lgb.OpeningBalance = LvRoundof((8 / YrDays) * EmpTDays)
+              End If
+            End If
+            'Credit Current Years PL & LTC
+            If lgb.LeaveType = "PL" Then
+              Dim tmp As Decimal = 0
+              tmp = LvRoundof((opbPL / YrDays) * EmpPTDays)
+              lgb.OpeningBalance = lgb.OpeningBalance + tmp
+            End If
+            If lgb.LeaveType = "LT" Then
+              Dim tmp As Decimal = 0
+              tmp = LvRoundof((opbLT / YrDays) * EmpPTDays)
+              lgb.OpeningBalance = lgb.OpeningBalance + tmp
+            End If
+          Next
+        End If
+        'Arrange oBals for full n final.
         For Each lgb As SIS.ATN.lgLedgerBalance In oBals
-          If lgb.LeaveType = "CL" Then
-            If lgb.OpeningBalance > 0 Then
-              lgb.OpeningBalance = LvRoundof((7 / YrDays) * EmpTDays)
-            End If
+          If lgb.LeaveType = "AP" Then  'accumulated priviledge
+            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+              If tmp.LeaveType = "PL" Then
+                tmp.OpeningBalance += lgb.OpeningBalance
+                tmp.Availed += lgb.Availed
+                tmp.InProcess += lgb.InProcess
+                lgb.OpeningBalance = 0
+                lgb.Availed = 0
+                lgb.InProcess = 0
+                Exit For
+              End If
+            Next
           End If
-          If lgb.LeaveType = "SL" Then
-            If lgb.OpeningBalance > 0 Then
-              lgb.OpeningBalance = LvRoundof((8 / YrDays) * EmpTDays)
-            End If
+          If lgb.LeaveType = "AD" Then  'advance priviledge
+            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+              If tmp.LeaveType = "PL" Then
+                tmp.Availed += lgb.Availed
+                tmp.InProcess += lgb.InProcess
+                lgb.Availed = 0
+                lgb.InProcess = 0
+                Exit For
+              End If
+            Next
           End If
-          'Credit Current Years PL & LTC
-          If lgb.LeaveType = "PL" Then
-            Dim tmp As Decimal = 0
-            tmp = LvRoundof((opbPL / YrDays) * EmpPTDays)
-            lgb.OpeningBalance = lgb.OpeningBalance + tmp
-          End If
-          If lgb.LeaveType = "LT" Then
-            Dim tmp As Decimal = 0
-            tmp = LvRoundof((opbLT / YrDays) * EmpPTDays)
-            lgb.OpeningBalance = lgb.OpeningBalance + tmp
+          If lgb.LeaveType = "AL" Then  'accumulated ltc
+            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+              If tmp.LeaveType = "LT" Then
+                tmp.OpeningBalance += lgb.OpeningBalance
+                tmp.Availed += lgb.Availed
+                tmp.InProcess += lgb.InProcess
+                lgb.OpeningBalance = 0
+                lgb.Availed = 0
+                lgb.InProcess = 0
+                Exit For
+              End If
+            Next
           End If
         Next
-      End If
-      'Arrange oBals for full n final.
-      For Each lgb As SIS.ATN.lgLedgerBalance In oBals
-        If lgb.LeaveType = "AP" Then  'accumulated priviledge
-          For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-            If tmp.LeaveType = "PL" Then
-              tmp.OpeningBalance += lgb.OpeningBalance
-              tmp.Availed += lgb.Availed
-              tmp.InProcess += lgb.InProcess
-              lgb.OpeningBalance = 0
-              lgb.Availed = 0
-              lgb.InProcess = 0
-              Exit For
-            End If
-          Next
-        End If
-        If lgb.LeaveType = "AD" Then  'advance priviledge
-          For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-            If tmp.LeaveType = "PL" Then
-              tmp.Availed += lgb.Availed
-              tmp.InProcess += lgb.InProcess
-              lgb.Availed = 0
-              lgb.InProcess = 0
-              Exit For
-            End If
-          Next
-        End If
-        If lgb.LeaveType = "AL" Then  'accumulated ltc
-          For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-            If tmp.LeaveType = "LT" Then
-              tmp.OpeningBalance += lgb.OpeningBalance
-              tmp.Availed += lgb.Availed
-              tmp.InProcess += lgb.InProcess
-              lgb.OpeningBalance = 0
-              lgb.Availed = 0
-              lgb.InProcess = 0
-              Exit For
-            End If
-          Next
-        End If
-      Next
-      'Leave adjustment
+        'Leave adjustment
 
-      'Check for -ve CL or SL and adjust from PL
-      For Each lgb As SIS.ATN.lgLedgerBalance In oBals
-        If lgb.LeaveType = "CL" Then
-          If lgb.Balance < 0 Then
-            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-              If tmp.LeaveType = "PL" Then
-                tmp.Availed += Math.Abs(lgb.Balance)
-                lgb.Availed = lgb.Availed + lgb.Balance
-                Exit For
-              End If
-            Next
-          End If
-        End If
-      Next
-      For Each lgb As SIS.ATN.lgLedgerBalance In oBals
-        If lgb.LeaveType = "SL" Then
-          If lgb.Balance < 0 Then
-            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-              If tmp.LeaveType = "PL" Then
-                tmp.Availed += Math.Abs(lgb.Balance)
-                lgb.Availed = lgb.Availed + lgb.Balance
-                Exit For
-              End If
-            Next
-          End If
-          Exit For
-        End If
-      Next
-      'Compensate PL in Balance LTC
-      For Each lgb As SIS.ATN.lgLedgerBalance In oBals
-        If lgb.LeaveType = "LT" Then  'ltc
-          If lgb.Balance > 0 Then
-            For Each tmp As SIS.ATN.lgLedgerBalance In oBals
-              If tmp.LeaveType = "PL" Then
-                If tmp.Availed >= lgb.Balance Then
-                  tmp.Availed -= lgb.Balance
-                  lgb.Availed += lgb.Balance
-                Else
-                  lgb.Availed += tmp.Availed
-                  tmp.Availed -= tmp.Availed
+        'Check for -ve CL or SL and adjust from PL
+        For Each lgb As SIS.ATN.lgLedgerBalance In oBals
+          If lgb.LeaveType = "CL" Then
+            If lgb.Balance < 0 Then
+              For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+                If tmp.LeaveType = "PL" Then
+                  tmp.Availed += Math.Abs(lgb.Balance)
+                  lgb.Availed = lgb.Availed + lgb.Balance
+                  Exit For
                 End If
-                Exit For
-              End If
-            Next
+              Next
+            End If
           End If
-        End If
-      Next
-      'Remove Other Leave Types
-      For I As Integer = oBals.Count - 1 To 0 Step -1
-        Dim lgb As SIS.ATN.lgLedgerBalance = oBals(I)
-        Select Case lgb.LeaveType
-          Case "CL", "SL", "PL", "LT"
-          Case Else
-            oBals.Remove(lgb)
-        End Select
-      Next
+        Next
+        For Each lgb As SIS.ATN.lgLedgerBalance In oBals
+          If lgb.LeaveType = "SL" Then
+            If lgb.Balance < 0 Then
+              For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+                If tmp.LeaveType = "PL" Then
+                  tmp.Availed += Math.Abs(lgb.Balance)
+                  lgb.Availed = lgb.Availed + lgb.Balance
+                  Exit For
+                End If
+              Next
+            End If
+            Exit For
+          End If
+        Next
+        'Compensate PL in Balance LTC
+        For Each lgb As SIS.ATN.lgLedgerBalance In oBals
+          If lgb.LeaveType = "LT" Then  'ltc
+            If lgb.Balance > 0 Then
+              For Each tmp As SIS.ATN.lgLedgerBalance In oBals
+                If tmp.LeaveType = "PL" Then
+                  If tmp.Availed >= lgb.Balance Then
+                    tmp.Availed -= lgb.Balance
+                    lgb.Availed += lgb.Balance
+                  Else
+                    lgb.Availed += tmp.Availed
+                    tmp.Availed -= tmp.Availed
+                  End If
+                  Exit For
+                End If
+              Next
+            End If
+          End If
+        Next
+        'Remove Other Leave Types
+        For I As Integer = oBals.Count - 1 To 0 Step -1
+          Dim lgb As SIS.ATN.lgLedgerBalance = oBals(I)
+          Select Case lgb.LeaveType
+            Case "CL", "SL", "PL", "LT"
+            Case Else
+              oBals.Remove(lgb)
+          End Select
+        Next
+      End If
       Return oBals
     End Function
     Public Shared Function GetPresentDaysByCardNoDate(ByVal CardNo As String, ByVal FromDate As DateTime, ByVal TillDate As DateTime) As Integer
@@ -1305,19 +1403,20 @@ Namespace SIS.ATN
       Dim MayApply As Boolean = True
       mRet = mRet & "<table width=""400px"">"
       mRet = mRet & "<tr>"
-      mRet = mRet & "<td class=""bar_greenHeader"" height=""25px"" style=""text-align:left""><b>LEAVE TYPE</b>"
+      mRet = mRet & "<td height=""25px"" style=""text-align:left""><b>LEAVE TYPE</b>"
       mRet = mRet & "</td>"
-      mRet = mRet & "<td class=""bar_greenHeader"" style=""text-align:right""><b>OP BAL.</b>"
+      mRet = mRet & "<td style=""text-align:right""><b>OP BAL.</b>"
       mRet = mRet & "</td>"
-      mRet = mRet & "<td class=""bar_greenHeader"" style=""text-align:right""><b>AVAILED</b>"
+      mRet = mRet & "<td style=""text-align:right""><b>AVAILED</b>"
       mRet = mRet & "</td>"
-      mRet = mRet & "<td class=""bar_greenHeader"" style=""text-align:right""><b>IN PROCESS</b>"
+      mRet = mRet & "<td style=""text-align:right""><b>IN PROCESS</b>"
       mRet = mRet & "</td>"
-      mRet = mRet & "<td class=""bar_greenHeader"" style=""text-align:right""><b>BALANCE</b>"
+      mRet = mRet & "<td style=""text-align:right""><b>BALANCE</b>"
       mRet = mRet & "</td>"
       mRet = mRet & "</tr>"
       For Each oBal As SIS.ATN.lgLedgerBalance In oBals
         If Not oBal.MonthlyOpening Then
+          If oBal.IsOutOfPolicy Then Continue For
           mRet = mRet & "<tr>"
           mRet = mRet & "<td>" & oBal.Description
           mRet = mRet & "</td>"

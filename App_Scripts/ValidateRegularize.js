@@ -3,23 +3,31 @@
   lpurpose: '',
   ASCanBeApplied: false,
   ADCanBeApplied: false,
+  MLCanBeApplied: false,
   SplitClickToggleTypes: false,
   //****************************
   leavetype_click: function (o) {
     var aIDs = o.id.split('±');
-    if (aIDs[1] == 'AS') {
+    if (aIDs[1] == 'AS' || aIDs[1] == 'Z5') {
       if (this.ASCanBeApplied == false) {
         o.checked = false;
         alert('ACCUMULATED SICK Leave can not be applied online. Mannually take approval and submit it to HR.');
         return false;
       }
     }
-    if (aIDs[1] == 'AD') {
+    if (aIDs[1] == 'AD' || aIDs[1] == 'Z6') {
       if (this.ADCanBeApplied == false) {
         o.checked = false;
-        alert('ADAVANCE PRIVILEDGE Leave can not be applied online. Mannually take approval and submit it to HR.');
+        alert('ADAVANCE LEAVE Leave can not be applied online. Mannually take approval and submit it to HR.');
         return false;
       }
+    }
+    if (aIDs[1] == 'ML') {
+      if (this.MLCanBeApplied == false) {
+        o.checked = false;
+        alert('Maternity Leave can not be applied online. Mannually take approval and submit it to HR.');
+        return false;
+  }
     }
     var prefix = aIDs[0];
     var sufix = aIDs[aIDs.length - 1];

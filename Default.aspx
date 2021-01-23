@@ -5,7 +5,7 @@
   <asp:Button 
     ID="cmdRooster" 
     runat="server" 
-    Text="Update WFH Roster" 
+    Text="WFH Roster can be updated by HODs only" 
     BorderColor="Maroon" 
     BackColor="Crimson" 
     ForeColor="White" 

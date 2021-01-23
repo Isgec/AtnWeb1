@@ -305,30 +305,7 @@ Namespace SIS.ATN
       Return _RecordCount
     End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _RecordID = Ctype(Reader("RecordID"),Int32)
-      _TranType = Ctype(Reader("TranType"),String)
-      _TranDate = Ctype(Reader("TranDate"),DateTime)
-      _CardNo = Ctype(Reader("CardNo"),String)
-      _LeaveTypeID = Ctype(Reader("LeaveTypeID"),String)
-      _InProcessDays = Ctype(Reader("InProcessDays"),Decimal)
-      _Days = Ctype(Reader("Days"),Decimal)
-      _FinYear = Ctype(Reader("FinYear"),String)
-      If Convert.IsDBNull(Reader("ApplHeaderID")) Then
-        _ApplHeaderID = String.Empty
-      Else
-        _ApplHeaderID = Ctype(Reader("ApplHeaderID"), String)
-      End If
-      If Convert.IsDBNull(Reader("ApplDetailID")) Then
-        _ApplDetailID = String.Empty
-      Else
-        _ApplDetailID = Ctype(Reader("ApplDetailID"), String)
-      End If
-      _TranTypeATN_TranType = New SIS.ATN.atnTranType("ATN_TranType1",Reader)
-      _CardNoEmployeeName = Reader("HRM_Employees2_EmployeeName") & " [" & Ctype(Reader("CardNo"), String) & "]"
-      _CardNoHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees2",Reader)
-      _LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes("ATN_LeaveTypes3",Reader)
-      _FinYearATN_FinYear = New SIS.ATN.atnFinYear("ATN_FinYear4",Reader)
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
     Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
       On Error Resume Next

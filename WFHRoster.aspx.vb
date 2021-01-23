@@ -75,7 +75,9 @@ Partial Class WFHRooster
     End If
     For Each y As SIS.ATN.wEmp In x.cEmps
       Dim z As SIS.ATN.wResp = SIS.ATN.wResp.GetReport(y.cno, cnf, y.lvl)
-      r = WriteEmp(ws, z.emp, r, cnf)
+      If z.emp IsNot Nothing Then
+        r = WriteEmp(ws, z.emp, r, cnf)
+      End If
     Next
     Return r
   End Function
@@ -125,7 +127,9 @@ Partial Class WFHRooster
       x = SIS.ATN.wResp.GetReport(user, Conf, Level)
       r = 5
       c = 1
-      WriteEmp(xlWS, x.emp, r, Conf)
+      If x.emp IsNot Nothing Then
+        WriteEmp(xlWS, x.emp, r, Conf)
+      End If
 
       xlPk.Save()
       xlPk.Dispose()
@@ -253,7 +257,6 @@ Partial Class WFHRooster
               J += 1
             Loop
             aEmps.Add(x)
-            I += 1
           Next
           xlP.Dispose()
         End Using

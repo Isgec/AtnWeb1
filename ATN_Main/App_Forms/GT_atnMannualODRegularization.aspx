@@ -39,7 +39,7 @@
 					</script>
 
 					<asp:TextBox ID="LC_CardNo1" Runat="Server" AutoCompleteType="None" CssClass="mytxt" Style="display:none" Width="40px" />
-					<asp:TextBox ID="LC_CardNoEmployeeName1" Runat="Server" AutoCompleteType="None" CssClass="mytxt" Width="300px" onfocus='this.value.select();' />
+					<asp:TextBox ID="LC_CardNoEmployeeName1" Runat="Server" AutoCompleteType="None" CssClass="mytxt" Width="300px" onfocus='this.select();' />
 					<AJX:AutoCompleteExtender ID="LC_CardNo1_AutoCompleteExtender" Runat="Server" CompletionInterval="100" CompletionListCssClass="autocomplete_completionListElement" CompletionListHighlightedItemCssClass="autocomplete_highlightedListItem" CompletionListItemCssClass="autocomplete_listItem" CompletionSetCount="10" FirstRowSelected="true" MinimumPrefixLength="1" OnClientItemSelected="LC_CardNo1_AutoCompleteExtender_Selected" ServiceMethod="CardNoCompletionList" TargetControlID="LC_CardNoEmployeeName1" />
 				</td>
 				<td style="Padding-left: 5px;">

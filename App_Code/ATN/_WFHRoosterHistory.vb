@@ -189,14 +189,14 @@ Namespace SIS.ATN
     Public Shared Function WFHRoosterHistoryGetNewRecord() As SIS.ATN.WFHRoosterHistory
       Return New SIS.ATN.WFHRoosterHistory()
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function WFHRoosterHistoryGetByID(ByVal SerialNo As Int32) As SIS.ATN.WFHRoosterHistory
       Dim Results As SIS.ATN.WFHRoosterHistory = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spWFHRoosterHistorySelectByID"
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SerialNo",SqlDbType.Int,SerialNo.ToString.Length, SerialNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SerialNo", SqlDbType.Int, SerialNo.ToString.Length, SerialNo)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@LoginID", SqlDbType.NvarChar, 9, HttpContext.Current.Session("LoginID"))
           Con.Open()
           Dim Reader As SqlDataReader = Cmd.ExecuteReader()
@@ -208,6 +208,23 @@ Namespace SIS.ATN
       End Using
       Return Results
     End Function
+    Public Shared Function GetHistoryByCardNoAttenDate(CardNo As String, AttenDate As String) As List(Of SIS.ATN.WFHRoosterHistory)
+      Dim Results As New List(Of SIS.ATN.WFHRoosterHistory)
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = "select hst.*, hrm.EmployeeName as HRM_Employees1_EmployeeName from ATN_WFHRoosterHistory as hst inner join HRM_Employees as hrm on hst.ModifiedBy = hrm.CardNo where hst.CardNo='" & CardNo & "' and hst.Attendate=convert(datetime,'" & AttenDate & "',103) order by hst.ModifiedOn DESC "
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.ATN.WFHRoosterHistory(Reader))
+          End While
+          Reader.Close()
+        End Using
+      End Using
+      Return Results
+    End Function
+
     <DataObjectMethod(DataObjectMethodType.Select)> _
     Public Shared Function WFHRoosterHistorySelectList(ByVal StartRowIndex As Integer, ByVal MaximumRows As Integer, ByVal OrderBy As String, ByVal SearchState As Boolean, ByVal SearchText As String) As List(Of SIS.ATN.WFHRoosterHistory)
       Dim Results As List(Of SIS.ATN.WFHRoosterHistory) = Nothing

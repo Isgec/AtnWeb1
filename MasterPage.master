@@ -113,5 +113,21 @@
     </script>
   --%>
   </form>
+<%--  <script>
+    Sys.UI.Point = function Sys$UI$Point(x, y) {
+
+      x = Math.round(x);
+      y = Math.round(y);
+
+      var e = Function._validateParams(arguments, [
+          { name: "x", type: Number, integer: true },
+          { name: "y", type: Number, integer: true }
+      ]);
+      if (e) throw e;
+      this.x = x;
+      this.y = y;
+    }
+
+  </script>--%>
 </body>
 </html>

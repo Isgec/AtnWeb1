@@ -72,6 +72,11 @@
 					<asp:Button ID="cmdIndividual" runat="server" Text="Transfer" ValidationGroup="Process" />
 				</td>
 			</tr>
+      <tr>
+        <td colspan="2">
+          <asp:Label ID="errmsg" runat="server" ></asp:Label>
+        </td>
+      </tr>
     </table>
   </ContentTemplate>
   <Triggers>

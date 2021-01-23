@@ -6,7 +6,7 @@ Imports System.ComponentModel
 Imports System.Net.Mail
 Imports System.Web.Mail
 Namespace SIS.ATN
-	Partial Public Class atnApplHeader
+  Partial Public Class atnApplHeader
     Public Shared Sub UnpostApplication(ByVal ApplHeaderID As Integer)
       If Convert.ToInt32(HttpContext.Current.Session("FinYear")) <> SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear Then
         Exit Sub
@@ -93,96 +93,96 @@ Namespace SIS.ATN
         SendApplicationEMail(oApl.LeaveApplID)
       End If
     End Sub
-		Public Shared Sub RejectApplication(ByVal ApplHeaderID As Integer, ByVal Remarks As String)
-			If Convert.ToInt32(HttpContext.Current.Session("FinYear")) <> SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear Then
-				Exit Sub
-			End If
-			Dim oApl As SIS.ATN.atnApplHeader = SIS.ATN.atnApplHeader.GetByID(ApplHeaderID)
-			Dim TmpApplStatusID As Integer = oApl.ApplStatusID
-			Select Case TmpApplStatusID
-				Case 2 ' Under Verification
-					oApl.VerificationRemark = IIf(Remarks = String.Empty, "NOT Verified", Remarks)
-					oApl.VerificationOn = Now
-				Case 3	'Under Approval
-					oApl.ApprovalRemark = IIf(Remarks = String.Empty, "NOT Approved", Remarks)
-					oApl.ApprovalOn = Now
-				Case 4	'Under Sanction
-					oApl.SanctionRemark = IIf(Remarks = String.Empty, "NOT Sanctioned", Remarks)
-					oApl.SanctionOn = Now
-				Case 5	'Under Posting
-					oApl.PostingRemark = IIf(Remarks = String.Empty, "NOT Posted", Remarks)
-					oApl.PostedOn = Now
-					oApl.PostedBy = HttpContext.Current.Session("LoginID")
-			End Select
-			oApl.ApplStatusID = 7
-			SIS.ATN.atnApplHeader.Update(oApl)
-			Dim oDys As List(Of SIS.ATN.atnAttendance) = SIS.ATN.atnAttendance.GetAttendanceByApplHeaderID(ApplHeaderID)
-			For Each oDy As SIS.ATN.atnAttendance In oDys
-				If Not oDy.Posted Then
-					oDy.Applied = False
-					oDy.ApplStatusID = 7
-					oDy.AppliedValue = 0
-					oDy.Applied1LeaveTypeID = ""
-					oDy.Applied2LeaveTypeID = ""
-					oDy.Posted1LeaveTypeID = ""
-					oDy.Posted2LeaveTypeID = ""
-					SIS.ATN.atnAttendance.Update(oDy)
-					'Delete Ledger
-					Dim oLgrs As List(Of SIS.ATN.atnLeaveLedger) = SIS.ATN.atnLeaveLedger.GetByApplDetailID(oDy.AttenID)
-					For Each oLgr As SIS.ATN.atnLeaveLedger In oLgrs
-						SIS.ATN.atnLeaveLedger.Delete(oLgr)
-					Next
-				End If
-			Next
-		End Sub
-		Public Shared Function SelectApplicationsUnderVerification(ByVal CardNo As String) As List(Of SIS.ATN.atnApplHeader)
-			Dim Results As List(Of SIS.ATN.atnApplHeader) = Nothing
-			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
-				Using Cmd As SqlCommand = Con.CreateCommand()
-					Cmd.CommandType = CommandType.StoredProcedure
-					Cmd.CommandText = "spatn_LG_ApplicationsUnderVerification"
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplStatusID", SqlDbType.Int, 2, 2)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 8, CardNo)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
-					Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
-					Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
-					_RecordCount = -1
-					Results = New List(Of SIS.ATN.atnApplHeader)()
-					Con.Open()
-					Dim Reader As SqlDataReader = Cmd.ExecuteReader()
-					While (Reader.Read())
-						Results.Add(New SIS.ATN.atnApplHeader(Reader))
-					End While
-					Reader.Close()
-					_RecordCount = Cmd.Parameters("@RecordCount").Value
-				End Using
-			End Using
-			Return Results
-		End Function
-		Public Shared Function SelectApplicationsToBeApproved(ByVal CardNo As String) As List(Of SIS.ATN.atnApplHeader)
-			Dim Results As List(Of SIS.ATN.atnApplHeader) = Nothing
-			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
-				Using Cmd As SqlCommand = Con.CreateCommand()
-					Cmd.CommandType = CommandType.StoredProcedure
-					Cmd.CommandText = "spatn_LG_ApplicationsToBeApproved"
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplStatusID", SqlDbType.Int, 2, 3)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 8, CardNo)
-					SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
-					Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
-					Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
-					_RecordCount = -1
-					Results = New List(Of SIS.ATN.atnApplHeader)()
-					Con.Open()
-					Dim Reader As SqlDataReader = Cmd.ExecuteReader()
-					While (Reader.Read())
-						Results.Add(New SIS.ATN.atnApplHeader(Reader))
-					End While
-					Reader.Close()
-					_RecordCount = Cmd.Parameters("@RecordCount").Value
-				End Using
-			End Using
-			Return Results
-		End Function
+    Public Shared Sub RejectApplication(ByVal ApplHeaderID As Integer, ByVal Remarks As String)
+      If Convert.ToInt32(HttpContext.Current.Session("FinYear")) <> SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear Then
+        Exit Sub
+      End If
+      Dim oApl As SIS.ATN.atnApplHeader = SIS.ATN.atnApplHeader.GetByID(ApplHeaderID)
+      Dim TmpApplStatusID As Integer = oApl.ApplStatusID
+      Select Case TmpApplStatusID
+        Case 2 ' Under Verification
+          oApl.VerificationRemark = IIf(Remarks = String.Empty, "NOT Verified", Remarks)
+          oApl.VerificationOn = Now
+        Case 3  'Under Approval
+          oApl.ApprovalRemark = IIf(Remarks = String.Empty, "NOT Approved", Remarks)
+          oApl.ApprovalOn = Now
+        Case 4  'Under Sanction
+          oApl.SanctionRemark = IIf(Remarks = String.Empty, "NOT Sanctioned", Remarks)
+          oApl.SanctionOn = Now
+        Case 5  'Under Posting
+          oApl.PostingRemark = IIf(Remarks = String.Empty, "NOT Posted", Remarks)
+          oApl.PostedOn = Now
+          oApl.PostedBy = HttpContext.Current.Session("LoginID")
+      End Select
+      oApl.ApplStatusID = 7
+      SIS.ATN.atnApplHeader.Update(oApl)
+      Dim oDys As List(Of SIS.ATN.atnAttendance) = SIS.ATN.atnAttendance.GetAttendanceByApplHeaderID(ApplHeaderID)
+      For Each oDy As SIS.ATN.atnAttendance In oDys
+        If Not oDy.Posted Then
+          oDy.Applied = False
+          oDy.ApplStatusID = 7
+          oDy.AppliedValue = 0
+          oDy.Applied1LeaveTypeID = ""
+          oDy.Applied2LeaveTypeID = ""
+          oDy.Posted1LeaveTypeID = ""
+          oDy.Posted2LeaveTypeID = ""
+          SIS.ATN.atnAttendance.Update(oDy)
+          'Delete Ledger
+          Dim oLgrs As List(Of SIS.ATN.atnLeaveLedger) = SIS.ATN.atnLeaveLedger.GetByApplDetailID(oDy.AttenID)
+          For Each oLgr As SIS.ATN.atnLeaveLedger In oLgrs
+            SIS.ATN.atnLeaveLedger.Delete(oLgr)
+          Next
+        End If
+      Next
+    End Sub
+    Public Shared Function SelectApplicationsUnderVerification(ByVal CardNo As String) As List(Of SIS.ATN.atnApplHeader)
+      Dim Results As List(Of SIS.ATN.atnApplHeader) = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spatn_LG_ApplicationsUnderVerification"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplStatusID", SqlDbType.Int, 2, 2)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 8, CardNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
+          Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
+          Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
+          _RecordCount = -1
+          Results = New List(Of SIS.ATN.atnApplHeader)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.ATN.atnApplHeader(Reader))
+          End While
+          Reader.Close()
+          _RecordCount = Cmd.Parameters("@RecordCount").Value
+        End Using
+      End Using
+      Return Results
+    End Function
+    Public Shared Function SelectApplicationsToBeApproved(ByVal CardNo As String) As List(Of SIS.ATN.atnApplHeader)
+      Dim Results As List(Of SIS.ATN.atnApplHeader) = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.StoredProcedure
+          Cmd.CommandText = "spatn_LG_ApplicationsToBeApproved"
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ApplStatusID", SqlDbType.Int, 2, 3)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, 8, CardNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
+          Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
+          Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
+          _RecordCount = -1
+          Results = New List(Of SIS.ATN.atnApplHeader)()
+          Con.Open()
+          Dim Reader As SqlDataReader = Cmd.ExecuteReader()
+          While (Reader.Read())
+            Results.Add(New SIS.ATN.atnApplHeader(Reader))
+          End While
+          Reader.Close()
+          _RecordCount = Cmd.Parameters("@RecordCount").Value
+        End Using
+      End Using
+      Return Results
+    End Function
     Public Shared Function UpdateAppliedLeaveStatus(ByVal Context As String, Optional ByVal AdvanceApplication As Boolean = False) As String
       'Revalidate Before Posting
       Dim MaySubmit As Boolean = False
@@ -403,13 +403,13 @@ Namespace SIS.ATN
             Dim tmp As String = IIf(oDy.PunchStatusID = "AD", "Full Day", IIf(oDy.PunchStatusID = "AF", "First Half", "Second Half"))
             Dim tmp2 As String = ""
             If oDy.Applied1LeaveTypeID = oDy.Applied2LeaveTypeID Then
-              tmp2 = oDy.Applied1LeaveTypeID
+              tmp2 = SIS.ATN.atnLeaveTypes.GetByID(oDy.Applied1LeaveTypeID).Description
             ElseIf oDy.Applied1LeaveTypeID = "" Then
-              tmp2 = oDy.Applied2LeaveTypeID
+              tmp2 = SIS.ATN.atnLeaveTypes.GetByID(oDy.Applied2LeaveTypeID).Description
             ElseIf oDy.Applied2LeaveTypeID = "" Then
-              tmp2 = oDy.Applied1LeaveTypeID
+              tmp2 = SIS.ATN.atnLeaveTypes.GetByID(oDy.Applied1LeaveTypeID).Description
             Else
-              tmp2 = oDy.Applied1LeaveTypeID & ", " & oDy.Applied2LeaveTypeID
+              tmp2 = SIS.ATN.atnLeaveTypes.GetByID(oDy.Applied1LeaveTypeID).Description & ", " & SIS.ATN.atnLeaveTypes.GetByID(oDy.Applied2LeaveTypeID).Description
             End If
             .AppendLine("<tr><td>" & oDy.AttenDate & "</td><td>" & tmp & " " & tmp2 & "</td></tr>")
           Next
@@ -485,10 +485,7 @@ Namespace SIS.ATN
           End Using
         Catch ex As Exception
         End Try
-
       End If
-
-
     End Sub
     Public Shared Sub SendClubbedEMailForVerificationOrApproval(ByVal empID As String, Optional ByVal Approver As Boolean = False)
       Dim maySend As Boolean = False
@@ -618,10 +615,6 @@ Namespace SIS.ATN
         End Using
       Catch ex As Exception
       End Try
-
-
-
     End Sub
-
   End Class
 End Namespace

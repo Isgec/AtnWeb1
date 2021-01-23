@@ -91,9 +91,9 @@
 
 			For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
 				If oLT.LeaveTypeID <> "FP" Then Continue For
-				If oLT.Applyiable Then
-					If oLT.MainType Then
-						Col = New TableCell
+        'If oLT.Applyiable Then
+        '	If oLT.MainType Then
+        Col = New TableCell
 						Chk = New CheckBox
 						Chk.ID = "±" & oLT.LeaveTypeID & "±" & oAt.AttenID
 						Chk.InputAttributes.Add("onclick", "lgValidate.leavetype_click(this);")
@@ -192,9 +192,9 @@
 						'end new code
 
 						Row.Cells.Add(Col)
-					End If
-				End If
-			Next
+        '	End If
+        'End If
+      Next
 
 
 			Col = New TableCell
@@ -309,20 +309,20 @@
 
 		For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
 			If oLT.LeaveTypeID <> "FP" Then Continue For
-			If oLT.Applyiable Then
-				mStr = mStr & "  aLTs[" & I.ToString & "]='" & oLT.LeaveTypeID & "';" & vbCrLf
-				If oLT.MainType Then
-					Col = New TableCell
+      'If oLT.Applyiable Then
+      mStr = mStr & "  aLTs[" & I.ToString & "]='" & oLT.LeaveTypeID & "';" & vbCrLf
+      'If oLT.MainType Then
+      Col = New TableCell
 					Col.Text = oLT.LeaveTypeID
 					Col.ToolTip = oLT.Description
 					Col.Width = 170
 					Col.CssClass = "rowpurple0"
 					Row.Cells.Add(Col)
 					tblWidth += 155
-				End If
-				I = I + 1
-			End If
-		Next
+        'End If
+        I = I + 1
+      'End If
+    Next
 		mStr = mStr & "</script>" & vbCrLf
 
 		Col = New TableCell

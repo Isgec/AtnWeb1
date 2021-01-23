@@ -4,22 +4,22 @@ Partial Class Informations
 	Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 		If HttpContext.Current.User.Identity.IsAuthenticated Then
 			Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(HttpContext.Current.User.Identity.Name)
-			If Not oEmp Is Nothing Then
-				F_EmployeeName.Text = oEmp.EmployeeName
+      If Not oEmp Is Nothing Then
+        F_EmployeeName.Text = oEmp.EmployeeName
         'F_Department.Text = oEmp.C_DepartmentID
         'F_Designation.Text = oEmp.C_DesignationIDHRM_Designations.Description
-				If oEmp.VerificationRequired Then
-					F_Verifier.Text = oEmp.VerifierIDEmployeeName
-				Else
-					F_Verifier.Text = "N/A"
-				End If
-				If oEmp.ApprovalRequired Then
-					F_Approver.Text = oEmp.ApproverIDEmployeeName
-				Else
-					F_Approver.Text = "N/A"
-				End If
-			End If
-			Me.Visible = True
+        F_Verifier.Text = "N/A"
+        Try
+          If oEmp.VerificationRequired Then F_Verifier.Text = oEmp.VerifierIDHRM_Employees.EmployeeName
+        Catch ex As Exception
+        End Try
+        F_Approver.Text = "N/A"
+        Try
+          If oEmp.ApprovalRequired Then F_Approver.Text = oEmp.ApproverIDHRM_Employees.EmployeeName
+        Catch ex As Exception
+        End Try
+      End If
+      Me.Visible = True
 			If Not Page.IsPostBack And Not Page.IsCallback Then
 				Try
 					LC_atnFinYear1.SelectedValue = Session("FinYear").ToString

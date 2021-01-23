@@ -25,10 +25,14 @@
                 <AJX:AutoCompleteExtender ID="LC_CardNo1_AutoCompleteExtender" runat="Server" CompletionInterval="100" CompletionListCssClass="autocomplete_completionListElement" CompletionListHighlightedItemCssClass="autocomplete_highlightedListItem" CompletionListItemCssClass="autocomplete_listItem" CompletionSetCount="10" FirstRowSelected="true" MinimumPrefixLength="1" OnClientItemSelected="LC_CardNo1_AutoCompleteExtender_Selected" ServiceMethod="CardNoCompletionList" TargetControlID="LC_CardNoEmployeeName1" />
               </td>
               <td>
-                <asp:Button ID="cmdPrint" runat="server" Text="Print Leave Card" OnClientClick="return print_LeaveCard();" />
+                <asp:Button ID="cmdPrint" runat="server" Text="Print Leave Card" onclick="cmdPrint_Click" />
               </td>
             </tr>
           </table>
+          <hr />
+          <div id="divLC" runat="server">
+
+          </div>
           <script type="text/javascript">
             var cnt = 0;
             function print_LeaveCard() {

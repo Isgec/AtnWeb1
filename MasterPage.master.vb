@@ -8,11 +8,6 @@ Partial Class MasterPage
       Response.Redirect("~/Login.aspx")
     End If
     If HttpContext.Current.User.Identity.IsAuthenticated Then
-      'Dim mFile As String = HttpContext.Current.Server.MapPath("~/UserRights/") & HttpContext.Current.Session("ApplicationID") & "/" & HttpContext.Current.User.Identity.Name & "_nMenu.ascx"
-      'If IO.File.Exists(mFile) Then
-      '  Dim ctl As UserControl = Page.LoadControl("~/UserRights/" & HttpContext.Current.Session("ApplicationID") & "/" & HttpContext.Current.User.Identity.Name & "_nMenu.ascx")
-      '  algmnu.Controls.Add(ctl)
-      'End If
       Dim mFile As String = HttpContext.Current.Server.MapPath("~/../UserRights/") & HttpContext.Current.Session("ApplicationID") & "/" & HttpContext.Current.User.Identity.Name & "_nMenu.xml"
       If IO.File.Exists(mFile) Then
         Dim tmp As IO.StreamReader = New IO.StreamReader(mFile)
@@ -41,37 +36,6 @@ Partial Class MasterPage
 		End If
 	End Sub
 
-	Protected Sub Page_PreRender(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.PreRender
-		'If HttpContext.Current.User.Identity.IsAuthenticated Then
-		'	Dim mFile As String = HttpContext.Current.Server.MapPath("~/../UserRights/") & HttpContext.Current.Session("ApplicationID") & "/" & HttpContext.Current.User.Identity.Name & "_nMenu.xml"
-		'	If IO.File.Exists(mFile) Then
-		'		Dim tbl As New Table
-		'		Dim row As New TableRow
-		'		Dim col As New TableCell
-
-		'		Dim ts As IO.StreamReader = New IO.StreamReader(mFile)
-		'		col.Text = ts.ReadToEnd
-		'		ts.Close()
-
-		'		row.Cells.Add(col)
-		'		tbl.Rows.Add(row)
-		'		Dim sb As StringBuilder = New StringBuilder()
-		'		Dim sw As IO.StringWriter = New IO.StringWriter(sb)
-		'		Dim writer As HtmlTextWriter = New HtmlTextWriter(sw)
-		'		Try
-		'			tbl.RenderControl(writer)
-		'		Catch ex As Exception
-
-		'		End Try
-		'		lgmnu.InnerHtml = sb.ToString
-		'	End If
-		'End If
-    'Dim pagePath As String = Request.AppRelativeCurrentExecutionFilePath
-    'Dim ocp As ContentPlaceHolder = New ContentPlaceHolder
-
-    'Me.Master.FindControl("mainBody").Controls.Add(ocp)
-
-	End Sub
   Protected Sub cmdRedirected_Click(sender As Object, e As System.Web.UI.ImageClickEventArgs) Handles cmdRedirected.Click
     Response.Redirect("http://192.9.200.169/Webpay/Empuser/default.htm")
   End Sub

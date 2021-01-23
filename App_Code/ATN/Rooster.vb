@@ -16,6 +16,7 @@ Namespace SIS.ATN
     ''' </summary>
     ''' <returns></returns>
     Public Property s As Boolean = False
+    Public Property hst As SIS.ATN.histEmp = Nothing
     Public Shared Function GetResp(CardNo As String, cnf As SIS.ATN.WFHConfig, Level As Integer) As SIS.ATN.wResp
       Dim tmp As New SIS.ATN.wResp
       Dim c As New SIS.ATN.wConfig
@@ -295,6 +296,62 @@ Namespace SIS.ATN
     End Sub
 
   End Class
-
+  Public Class histEmp
+    ''' <summary>
+    ''' Employee Code
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cno As String = ""
+    ''' <summary>
+    ''' Employee Name
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cnm As String = ""
+    ''' <summary>
+    ''' History of date
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cdt As String = ""
+    Public Property hist As New List(Of SIS.ATN.histEmpData)
+    Public Shared Function GetHist(CardNo As String, Attendate As String) As SIS.ATN.histEmp
+      Dim tmp As New SIS.ATN.histEmp
+      Dim xEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.atnEmployeesGetByID(CardNo)
+      tmp.cno = CardNo
+      tmp.cnm = xEmp.EmployeeName
+      tmp.cdt = Attendate
+      Dim xHist As List(Of SIS.ATN.WFHRoosterHistory) = SIS.ATN.WFHRoosterHistory.GetHistoryByCardNoAttenDate(CardNo, Attendate)
+      For Each x As SIS.ATN.WFHRoosterHistory In xHist
+        Dim t As New SIS.ATN.histEmpData
+        t.cno = x.ModifiedBy
+        t.cnm = x.HRM_Employees1_EmployeeName
+        t.cdt = x.ModifiedOn
+        t.sts = x.WFHFullDay
+        tmp.hist.Add(t)
+      Next
+      Return tmp
+    End Function
+  End Class
+  Public Class histEmpData
+    ''' <summary>
+    ''' Changed By Employee Code
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cno As String = ""
+    ''' <summary>
+    ''' Changed by Employee Name
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cnm As String = ""
+    ''' <summary>
+    ''' Changed on datetime
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property cdt As String = ""
+    ''' <summary>
+    ''' Changed Status of WFH
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property sts As Boolean = False
+  End Class
 End Namespace
 

@@ -1,3 +1,5 @@
+Imports System.Data
+Imports System.Data.SqlClient
 Partial Class GF_atnEmployees
   Inherits SIS.SYS.GridBase
   Protected Sub ToolBar0_1_Init(ByVal sender As Object, ByVal e As System.EventArgs) Handles ToolBar0_1.Init
@@ -12,21 +14,21 @@ Partial Class GF_atnEmployees
   Private _InfoUrl As String = "~/ATN_Main/App_Display/DF_atnEmployees.aspx"
   Private _DisplayEdit As Boolean = True
   Private _DisplayInfo As Boolean = False
-	Protected Sub cmdRemove_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-		Dim oBut As LinkButton = CType(sender, LinkButton)
-		Dim CardNo As String = oBut.CommandArgument
-		SIS.SYS.Utilities.ApplicationSpacific.RemoveAttendanceAfterReleavingDate(CardNo)
-	End Sub
-	Protected Sub Edit_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
-		Dim oBut As ImageButton = CType(sender, ImageButton)
-		Dim RedirectUrl As String = _EditUrl & "?Code=" & oBut.CommandArgument.ToString
-		Response.Redirect(RedirectUrl)
-	End Sub
-	Protected Sub Info_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
-		Dim oBut As ImageButton = CType(sender, ImageButton)
-		Dim RedirectUrl As String = _InfoUrl & "?Code=" & oBut.CommandArgument.ToString
-		Response.Redirect(RedirectUrl)
-	End Sub
+  Protected Sub cmdRemove_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+    Dim oBut As LinkButton = CType(sender, LinkButton)
+    Dim CardNo As String = oBut.CommandArgument
+    SIS.SYS.Utilities.ApplicationSpacific.RemoveAttendanceAfterReleavingDate(CardNo)
+  End Sub
+  Protected Sub Edit_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+    Dim oBut As ImageButton = CType(sender, ImageButton)
+    Dim RedirectUrl As String = _EditUrl & "?Code=" & oBut.CommandArgument.ToString
+    Response.Redirect(RedirectUrl)
+  End Sub
+  Protected Sub Info_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
+    Dim oBut As ImageButton = CType(sender, ImageButton)
+    Dim RedirectUrl As String = _InfoUrl & "?Code=" & oBut.CommandArgument.ToString
+    Response.Redirect(RedirectUrl)
+  End Sub
   Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
     GridView1.Columns(0).Visible = _DisplayEdit
     GridView1.Columns(1).Visible = _DisplayInfo
@@ -38,13 +40,13 @@ Partial Class GF_atnEmployees
 
   End Sub
 
-  <System.Web.Services.WebMethod(EnableSession:=True)> _
- <System.Web.Script.Services.ScriptMethod()> _
+  <System.Web.Services.WebMethod(EnableSession:=True)>
+  <System.Web.Script.Services.ScriptMethod()>
   Public Shared Function VerifierIDCompletionList(ByVal prefixText As String, ByVal count As Integer) As String()
     Return SIS.ATN.atnEmployees.SelectatnEmployeesAutoCompleteList(prefixText, count)
   End Function
-  <System.Web.Services.WebMethod(EnableSession:=True)> _
-  <System.Web.Script.Services.ScriptMethod()> _
+  <System.Web.Services.WebMethod(EnableSession:=True)>
+  <System.Web.Script.Services.ScriptMethod()>
   Public Shared Function ApproverIDCompletionList(ByVal prefixText As String, ByVal count As Integer) As String()
     Return SIS.ATN.atnEmployees.SelectatnEmployeesAutoCompleteList(prefixText, count)
   End Function
@@ -72,45 +74,59 @@ Partial Class GF_atnEmployees
       Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(CardNo)
       If oEmp.Contractual Then Exit Sub
       If oEmp.ActiveState Then
-        If Convert.ToDateTime(oEmp.C_DateOfJoining, ci) > Convert.ToDateTime(oFyr.StartDate, ci) Then
-          Dim oLgrs As List(Of SIS.ATN.atnLeaveLedger) = SIS.ATN.atnLeaveLedger.GetByCardNo(CardNo, "")
-          For Each oLgr As SIS.ATN.atnLeaveLedger In oLgrs
-            If oLgr.TranType = "OPB" Then
-              If oLgr.LeaveTypeID = "CL" Or oLgr.LeaveTypeID = "SL" Then
-                SIS.ATN.atnLeaveLedger.Delete(oLgr)
+        If oEmp.C_OfficeID = 6 Then
+          If Convert.ToDateTime(oEmp.C_DateOfJoining, ci) > Convert.ToDateTime(oFyr.StartDate, ci) Then
+            Dim oLgrs As List(Of SIS.ATN.atnLeaveLedger) = SIS.ATN.atnLeaveLedger.GetByCardNo(CardNo, "")
+            For Each oLgr As SIS.ATN.atnLeaveLedger In oLgrs
+              If oLgr.TranType = "OPB" Then
+                If oLgr.LeaveTypeID = "CL" Or oLgr.LeaveTypeID = "SL" Then
+                  SIS.ATN.atnLeaveLedger.Delete(oLgr)
+                End If
               End If
-            End If
-          Next
-          Dim WorkDays As Integer = 0
-          Dim YrDays As Integer = DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.EndDate, ci), Convert.ToDateTime(oFyr.StartDate, ci))
-          WorkDays = DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.EndDate, ci), Convert.ToDateTime(oEmp.C_DateOfJoining, ci))
-          Dim cCL As Single = SIS.ATN.lgLedgerBalance.LvRoundof((7 / YrDays) * WorkDays)
-          Dim cSL As Single = SIS.ATN.lgLedgerBalance.LvRoundof((8 / YrDays) * WorkDays)
-          Dim iLgr As SIS.ATN.atnLeaveLedger
-          'Insert CL
-          iLgr = New SIS.ATN.atnLeaveLedger
-          With iLgr
-            .CardNo = CardNo
-            .Days = cCL
-            .FinYear = SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear
-            .InProcessDays = 0
-            .LeaveTypeID = "CL"
-            .TranDate = Now
-            .TranType = "OPB"
-          End With
-          SIS.ATN.atnLeaveLedger.InsertOpeningBalance(iLgr)
-          'Insert SL
-          iLgr = New SIS.ATN.atnLeaveLedger
-          With iLgr
-            .CardNo = CardNo
-            .Days = cSL
-            .FinYear = SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear
-            .InProcessDays = 0
-            .LeaveTypeID = "SL"
-            .TranDate = Now
-            .TranType = "OPB"
-          End With
-          SIS.ATN.atnLeaveLedger.InsertOpeningBalance(iLgr)
+            Next
+            Dim WorkDays As Integer = 0
+            Dim YrDays As Integer = DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.EndDate, ci), Convert.ToDateTime(oFyr.StartDate, ci))
+            WorkDays = DateDiff(DateInterval.Day, Convert.ToDateTime(oFyr.EndDate, ci), Convert.ToDateTime(oEmp.C_DateOfJoining, ci))
+            Dim cCL As Single = SIS.ATN.lgLedgerBalance.LvRoundof((7 / YrDays) * WorkDays)
+            Dim cSL As Single = SIS.ATN.lgLedgerBalance.LvRoundof((8 / YrDays) * WorkDays)
+            Dim iLgr As SIS.ATN.atnLeaveLedger
+            'Insert CL
+            iLgr = New SIS.ATN.atnLeaveLedger
+            With iLgr
+              .CardNo = CardNo
+              .Days = cCL
+              .FinYear = SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear
+              .InProcessDays = 0
+              .LeaveTypeID = "CL"
+              .TranDate = Now
+              .TranType = "OPB"
+            End With
+            SIS.ATN.atnLeaveLedger.InsertOpeningBalance(iLgr)
+            'Insert SL
+            iLgr = New SIS.ATN.atnLeaveLedger
+            With iLgr
+              .CardNo = CardNo
+              .Days = cSL
+              .FinYear = SIS.SYS.Utilities.ApplicationSpacific.ActiveFinYear
+              .InProcessDays = 0
+              .LeaveTypeID = "SL"
+              .TranDate = Now
+              .TranType = "OPB"
+            End With
+            SIS.ATN.atnLeaveLedger.InsertOpeningBalance(iLgr)
+          End If
+        Else
+          If Convert.ToDateTime(oEmp.C_DateOfJoining, ci).Year = Convert.ToInt32(oFyr.FinYear) Then
+            Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
+              Using Cmd As SqlCommand = Con.CreateCommand()
+                Cmd.CommandType = CommandType.Text
+                Cmd.CommandText = "update HRM_Employees set CreditQuarterly=1 where cardno='" & oEmp.CardNo & "'"
+                Con.Open()
+                Cmd.ExecuteNonQuery()
+              End Using
+            End Using
+          End If
+
         End If
       End If
     End If

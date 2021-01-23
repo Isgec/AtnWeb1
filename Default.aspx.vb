@@ -3,7 +3,8 @@ Imports OfficeOpenXml
 Imports System.Web.Script.Serialization
 
 Partial Class LGDefault
-    Inherits System.Web.UI.Page
+  Inherits System.Web.UI.Page
+
   <System.Web.Services.WebMethod()>
   <System.Web.Script.Services.ScriptMethod()>
   Public Shared Function LoadUserControl(ByVal message As String) As String
@@ -160,7 +161,8 @@ Partial Class LGDefault
       str &= "|~/ATN_Main/App_View/GD_atnAppliedApplications.aspx|My Application"
       str &= "|~/ATN_Main/App_Forms/GF_atnApproverChangeRequest.aspx|Change Approver"
       str &= "|~/ATN_Main/App_Reports/GP_atnPrintLeavecard.aspx|Leave Card"
-      str &= "|~/ATN_Main/App_View/GD_atnRules.aspx|Leave Rules"
+      str &= "|~/ATN_Main/App_View/OfficeRule.htm|Leave Rules [Office]"
+      str &= "|~/ATN_Main/App_View/SiteRule.htm|Leave Rules [Site]"
       str &= "|~/TA_Main/App_Forms/GF_taTPUserInvoicing.aspx|Travel Invoice"
       str &= "|~/WFHRoster.aspx|Update WFH"
 
@@ -191,4 +193,5 @@ Partial Class LGDefault
   Protected Sub cmdRooster_Click(sender As Object, e As EventArgs)
     Response.Redirect("~/WFHRoster.aspx")
   End Sub
+
 End Class

@@ -202,7 +202,19 @@ Namespace SIS.ATN
     Public ReadOnly Property PunchStatusIDATN_PunchStatus() As SIS.ATN.atnPunchStatus
       Get
         If _PunchStatusIDATN_PunchStatus Is Nothing Then
-          _PunchStatusIDATN_PunchStatus = SIS.ATN.atnPunchStatus.GetByID(_PunchStatusID)
+          If _PunchStatusID <> "" Then
+            _PunchStatusIDATN_PunchStatus = SIS.ATN.atnPunchStatus.GetByID(_PunchStatusID)
+          Else
+            _PunchStatusIDATN_PunchStatus = New SIS.ATN.atnPunchStatus
+          End If
+        Else
+          If _PunchStatusID <> "" Then
+            If _PunchStatusIDATN_PunchStatus.PunchStatusID <> _PunchStatusID Then
+              _PunchStatusIDATN_PunchStatus = SIS.ATN.atnPunchStatus.GetByID(_PunchStatusID)
+            End If
+          Else
+            _PunchStatusIDATN_PunchStatus = New SIS.ATN.atnPunchStatus
+          End If
         End If
         Return _PunchStatusIDATN_PunchStatus
       End Get
@@ -210,7 +222,19 @@ Namespace SIS.ATN
     Public ReadOnly Property Applied1LeaveTypeIDATN_LeaveTypes() As SIS.ATN.atnLeaveTypes
       Get
         If _Applied1LeaveTypeIDATN_LeaveTypes Is Nothing Then
-          _Applied1LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied1LeaveTypeID)
+          If _Applied1LeaveTypeID <> "" Then
+            _Applied1LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied1LeaveTypeID)
+          Else
+            _Applied1LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes
+          End If
+        Else
+          If _Applied1LeaveTypeID <> "" Then
+            If _Applied1LeaveTypeIDATN_LeaveTypes.LeaveTypeID <> _Applied1LeaveTypeID Then
+              _Applied1LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied1LeaveTypeID)
+            End If
+          Else
+            _Applied1LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes
+          End If
         End If
         Return _Applied1LeaveTypeIDATN_LeaveTypes
       End Get
@@ -218,7 +242,19 @@ Namespace SIS.ATN
     Public ReadOnly Property Applied2LeaveTypeIDATN_LeaveTypes() As SIS.ATN.atnLeaveTypes
       Get
         If _Applied2LeaveTypeIDATN_LeaveTypes Is Nothing Then
-          _Applied2LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied2LeaveTypeID)
+          If _Applied2LeaveTypeID <> "" Then
+            _Applied2LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied2LeaveTypeID)
+          Else
+            _Applied2LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes
+          End If
+        Else
+          If _Applied2LeaveTypeID <> "" Then
+            If _Applied2LeaveTypeIDATN_LeaveTypes.LeaveTypeID <> _Applied2LeaveTypeID Then
+              _Applied2LeaveTypeIDATN_LeaveTypes = SIS.ATN.atnLeaveTypes.GetByID(_Applied2LeaveTypeID)
+            End If
+          Else
+            _Applied2LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes
+          End If
         End If
         Return _Applied2LeaveTypeIDATN_LeaveTypes
       End Get
@@ -226,7 +262,20 @@ Namespace SIS.ATN
     Public ReadOnly Property ApplStatusIDATN_ApplicationStatus() As SIS.ATN.atnApplicationStatus
       Get
         If _ApplStatusIDATN_ApplicationStatus Is Nothing Then
-          _ApplStatusIDATN_ApplicationStatus = SIS.ATN.atnApplicationStatus.GetByID(_ApplStatusID)
+          If _ApplStatusID <> "" Then
+            _ApplStatusIDATN_ApplicationStatus = SIS.ATN.atnApplicationStatus.GetByID(_ApplStatusID)
+          Else
+            _ApplStatusIDATN_ApplicationStatus = New SIS.ATN.atnApplicationStatus
+          End If
+        Else
+          If _ApplStatusID <> "" Then
+            If _ApplStatusIDATN_ApplicationStatus.ApplStatusID <> _ApplStatusID Then
+              _ApplStatusIDATN_ApplicationStatus = SIS.ATN.atnApplicationStatus.GetByID(_ApplStatusID)
+            End If
+          Else
+            _ApplStatusIDATN_ApplicationStatus = New SIS.ATN.atnApplicationStatus
+          End If
+
         End If
         Return _ApplStatusIDATN_ApplicationStatus
       End Get
@@ -293,110 +342,7 @@ Namespace SIS.ATN
 			Return _RecordCount
 		End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _AttenID = Ctype(Reader("AttenID"),Int32)
-      _AttenDate = Ctype(Reader("AttenDate"),DateTime)
-      _CardNo = Ctype(Reader("CardNo"),String)
-      If Convert.IsDBNull(Reader("Punch1Time")) Then
-        _Punch1Time = String.Empty
-      Else
-        _Punch1Time = Ctype(Reader("Punch1Time"), String)
-      End If
-      If Convert.IsDBNull(Reader("Punch2Time")) Then
-        _Punch2Time = String.Empty
-      Else
-        _Punch2Time = Ctype(Reader("Punch2Time"), String)
-      End If
-      _PunchStatusID = Ctype(Reader("PunchStatusID"),String)
-      If Convert.IsDBNull(Reader("PunchValue")) Then
-        _PunchValue = String.Empty
-      Else
-        _PunchValue = Ctype(Reader("PunchValue"), String)
-      End If
-      _NeedsRegularization = Ctype(Reader("NeedsRegularization"),Boolean)
-      _Applied = Ctype(Reader("Applied"),Boolean)
-      If Convert.IsDBNull(Reader("Applied1LeaveTypeID")) Then
-        _Applied1LeaveTypeID = String.Empty
-      Else
-        _Applied1LeaveTypeID = Ctype(Reader("Applied1LeaveTypeID"), String)
-      End If
-      If Convert.IsDBNull(Reader("Applied2LeaveTypeID")) Then
-        _Applied2LeaveTypeID = String.Empty
-      Else
-        _Applied2LeaveTypeID = Ctype(Reader("Applied2LeaveTypeID"), String)
-      End If
-      If Convert.IsDBNull(Reader("ApplHeaderID")) Then
-        _ApplHeaderID = String.Empty
-      Else
-        _ApplHeaderID = Ctype(Reader("ApplHeaderID"), String)
-      End If
-      If Convert.IsDBNull(Reader("ApplStatusID")) Then
-        _ApplStatusID = String.Empty
-      Else
-        _ApplStatusID = Ctype(Reader("ApplStatusID"), String)
-      End If
-      _Posted = Ctype(Reader("Posted"),Boolean)
-      If Convert.IsDBNull(Reader("FinYear")) Then
-        _FinYear = String.Empty
-      Else
-        _FinYear = Ctype(Reader("FinYear"), String)
-      End If
-      _CardNoEmployeeName = Reader("HRM_Employees1_EmployeeName") & " [" & Ctype(Reader("CardNo"), String) & "]"
-      _CardNoHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees1",Reader)
-      _PunchStatusIDATN_PunchStatus = New SIS.ATN.atnPunchStatus("ATN_PunchStatus2",Reader)
-      _Applied1LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes("ATN_LeaveTypes3",Reader)
-      _Applied2LeaveTypeIDATN_LeaveTypes = New SIS.ATN.atnLeaveTypes("ATN_LeaveTypes4",Reader)
-      _ApplStatusIDATN_ApplicationStatus = New SIS.ATN.atnApplicationStatus("ATN_ApplicationStatus5",Reader)
-    End Sub
-    Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _AttenID = Ctype(Reader(AliasName & "_AttenID"),Int32)
-      _AttenDate = Ctype(Reader(AliasName & "_AttenDate"),DateTime)
-      _CardNo = Ctype(Reader(AliasName & "_CardNo"),String)
-      If Convert.IsDBNull(Reader(AliasName & "_Punch1Time")) Then
-        _Punch1Time = String.Empty
-      Else
-        _Punch1Time = Ctype(Reader(AliasName & "_Punch1Time"), String)
-      End If
-      If Convert.IsDBNull(Reader(AliasName & "_Punch2Time")) Then
-        _Punch2Time = String.Empty
-      Else
-        _Punch2Time = Ctype(Reader(AliasName & "_Punch2Time"), String)
-      End If
-      _PunchStatusID = Ctype(Reader(AliasName & "_PunchStatusID"),String)
-      If Convert.IsDBNull(Reader(AliasName & "_PunchValue")) Then
-        _PunchValue = String.Empty
-      Else
-        _PunchValue = Ctype(Reader(AliasName & "_PunchValue"), String)
-      End If
-      _NeedsRegularization = Ctype(Reader(AliasName & "_NeedsRegularization"),Boolean)
-      _Applied = Ctype(Reader(AliasName & "_Applied"),Boolean)
-      If Convert.IsDBNull(Reader(AliasName & "_Applied1LeaveTypeID")) Then
-        _Applied1LeaveTypeID = String.Empty
-      Else
-        _Applied1LeaveTypeID = Ctype(Reader(AliasName & "_Applied1LeaveTypeID"), String)
-      End If
-      If Convert.IsDBNull(Reader(AliasName & "_Applied2LeaveTypeID")) Then
-        _Applied2LeaveTypeID = String.Empty
-      Else
-        _Applied2LeaveTypeID = Ctype(Reader(AliasName & "_Applied2LeaveTypeID"), String)
-      End If
-      If Convert.IsDBNull(Reader(AliasName & "_ApplHeaderID")) Then
-        _ApplHeaderID = String.Empty
-      Else
-        _ApplHeaderID = Ctype(Reader(AliasName & "_ApplHeaderID"), String)
-      End If
-      If Convert.IsDBNull(Reader(AliasName & "_ApplStatusID")) Then
-        _ApplStatusID = String.Empty
-      Else
-        _ApplStatusID = Ctype(Reader(AliasName & "_ApplStatusID"), String)
-      End If
-      _Posted = Ctype(Reader(AliasName & "_Posted"),Boolean)
-      If Convert.IsDBNull(Reader(AliasName & "_FinYear")) Then
-        _FinYear = String.Empty
-      Else
-        _FinYear = Ctype(Reader(AliasName & "_FinYear"), String)
-      End If
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
     Public Sub New()
     End Sub

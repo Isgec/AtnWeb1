@@ -112,40 +112,25 @@ Namespace SIS.ATN
       Return _RecordCount
     End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _LeaveApplID = Ctype(Reader("LeaveApplID"),Int32)
-      If Convert.IsDBNull(Reader("VerifiedBy")) Then
-        _VerifiedBy = String.Empty
-      Else
-        _VerifiedBy = Ctype(Reader("VerifiedBy"), String)
-      End If
-			If Convert.IsDBNull(Reader("EMailID")) Then
-				_EMailID = String.Empty
-			Else
-				_EMailID = CType(Reader("EMailID"), String)
-			End If
-			_ApplicationCount = CType(Reader("ApplicationCount"), Int32)
-			_ApplStatusID = CType(Reader("ApplStatusID"), Int32)
-      _FinYear = Ctype(Reader("FinYear"),String)
-      _VerifiedByHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees1",Reader)
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
-    Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _LeaveApplID = Ctype(Reader(AliasName & "_LeaveApplID"),Int32)
-      If Convert.IsDBNull(Reader(AliasName & "_VerifiedBy")) Then
-        _VerifiedBy = String.Empty
-      Else
-        _VerifiedBy = Ctype(Reader(AliasName & "_VerifiedBy"), String)
-      End If
-			If Convert.IsDBNull(Reader(AliasName & "_EMailID")) Then
-				_EMailID = String.Empty
-			Else
-				_EMailID = CType(Reader(AliasName & "_EMailID"), String)
-			End If
-			_ApplStatusID = CType(Reader(AliasName & "_ApplStatusID"), Int32)
-			_ApplicationCount = CType(Reader(AliasName & "_ApplicationCount"), Int32)
-			_FinYear = CType(Reader(AliasName & "_FinYear"), String)
-    End Sub
+    ' Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
+    '   On Error Resume Next
+    '   _LeaveApplID = Ctype(Reader(AliasName & "_LeaveApplID"),Int32)
+    '   If Convert.IsDBNull(Reader(AliasName & "_VerifiedBy")) Then
+    '     _VerifiedBy = String.Empty
+    '   Else
+    '     _VerifiedBy = Ctype(Reader(AliasName & "_VerifiedBy"), String)
+    '   End If
+    'If Convert.IsDBNull(Reader(AliasName & "_EMailID")) Then
+    '	_EMailID = String.Empty
+    'Else
+    '	_EMailID = CType(Reader(AliasName & "_EMailID"), String)
+    'End If
+    '_ApplStatusID = CType(Reader(AliasName & "_ApplStatusID"), Int32)
+    '_ApplicationCount = CType(Reader(AliasName & "_ApplicationCount"), Int32)
+    '_FinYear = CType(Reader(AliasName & "_FinYear"), String)
+    ' End Sub
     Public Sub New()
     End Sub
   End Class

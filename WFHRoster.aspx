@@ -241,6 +241,11 @@
       flex-direction: row;
       background-color: #f1f1f1;
     }
+    .nt-rst-col {
+      display: flex;
+      flex-direction:column;
+      background-color: #f1f1f1;
+    }
 
     .rst-bcc {
       background-color: gold;
@@ -309,6 +314,15 @@
       border: 2px solid #f1f1f1;
     }
 
+    .wfh-hd {
+      color:gray;
+      margin: 2px;
+      text-align: center;
+      line-height: 2rem;
+      font-size: 0.8rem;
+      vertical-align:text-bottom;
+      border: 2px solid #f1f1f1;
+    }
     .rst-wfh {
       color: crimson;
       margin: 2px;
@@ -326,7 +340,12 @@
       font-size: 1.5rem;
       border: 2px solid #f1f1f1;
     }
+      .h-sts:hover{
+        color:gold;
+        opacity: 0.7;
+        cursor:default;
 
+      }
       .l-emp:hover,
       .rst-bcc:hover,
       .rst-wfh:hover,
@@ -484,11 +503,64 @@
       <div class="nt-body">
         <div class="nt-error" id="divError" style="display: none;">
         </div>
+        <style>
+          .nt-stsHist {
+            border: 1pt solid #b7b5b5;
+            border-radius: 6px;
+            background-color: #dddbdb;
+            margin:10% auto;
+            padding: 10px;
+            width:40%;
+          }
+          .nt-hst-row {
+            display:flex;
+            justify-content:space-around;
+            margin:0px;
+            border-top-left-radius:inherit;
+            border-top-right-radius:inherit;
+            background-color:#265b85;
+          }
+          .nt-hst-row > div {
+            margin:10px;
+            font-weight:bold;
+            font-size:0.8rem;
+            color:white;
+          }
+          .nt-hst-data {
+            display:flex;
+            justify-content:space-between;
+          }
+          .nt-hst-data > div {
+            margin:6px;
+            font-size:0.7rem;
+          }
+
+        </style>
+        <%--History data Modal Popup--%>
+        <div id="divHist" class="nt-modal-container">
+          <div  class="nt-stsHist">
+            <%--Employee and date--%>
+            <div class="nt-hst-row" id="stsHEmp">
+            </div>
+            <div style="font-size: 14px; font-weight: bold; margin: 6px;">
+               STATUS Update History
+            </div>
+            <%--History Data--%>
+            <div id="stsHData">
+            </div>
+            <div>
+              <input type="button" class="nt-but-success" onclick="return wfh_script.hideHist();" value="Close" />
+            </div>
+          </div>
+
+        </div>
+        <%--End History data--%>
+
         <div class="nt-rst-row" id="rstTable">
           <%--Data--%>
         </div>
       </div>
-      <div id="rstData" runat="server">
+      <div id="rst__Data" runat="server">
       </div>
     </div>
     <div id="dmsAlert" style="position: absolute; top: 50%; left: 50%; display: none; padding: 20px; border: 1pt solid black; background-color: lightgray; border-radius: 30px; box-shadow: 10px 10px 10px 10px darkgray; color: black; font-weight: bold; font-size: 14px; transform: translateY(-50%); transform: translateX(-50%);">
@@ -611,9 +683,15 @@
               z += '  <td class=\'rst-nw\' title=\'Weekly off\'>WO</td>';
             } else {
               if (r.wd) {
-                z += '  <td><div class=\'tt\'><i id=\'' + r.adt + '_' + x.cno + '\' class=\'fas fa-home rst-wfh c-sts\'></i>' + '<span id=\'ttt_' + r.adt + '_' + x.cno + '\' class=\'ttt\'>' + (r.hst.length > 0 ? r.hst[0].h : 'N/A') + '</span></div></td>';
+                z += '  <td><div class=\'tt\'><i id=\'' + r.adt + '_' + x.cno + '\' class=\'fas fa-home rst-wfh c-sts\'></i>'
+                        + '<i id=\'hd_' + r.adt + '_' + x.cno + '\' class=\'fas fa-angle-down wfh-hd h-sts\'></i>'
+                        + '<span id=\'ttt_' + r.adt + '_' + x.cno + '\' class=\'ttt\'>' + (r.hst.length > 0 ? r.hst[0].h : 'N/A')
+                        + '</span></div></td>';
               } else {
-                z += '  <td><div class=\'tt\'><i id=\'' + r.adt + '_' + x.cno + '\' class=\'fas fa-industry rst-pio c-sts\'></i>' + '<span id=\'ttt_' + r.adt + '_' + x.cno + '\' class=\'ttt\'>' + (r.hst.length > 0 ? r.hst[0].h : 'N/A') + '</span></div></td>';
+                z += '  <td><div class=\'tt\'><i id=\'' + r.adt + '_' + x.cno + '\' class=\'fas fa-industry rst-pio c-sts\'></i>'
+                        + '<i id=\'hd_' + r.adt + '_' + x.cno + '\' class=\'fas fa-angle-down wfh-hd h-sts\'></i>'
+                        + '<span id=\'ttt_' + r.adt + '_' + x.cno + '\' class=\'ttt\'>' + (r.hst.length > 0 ? r.hst[0].h : 'N/A')
+                        + '</span></div></td>';
               }
             }
           }
@@ -775,6 +853,58 @@
         $get('f_Uploads').click();
         return false;
       },
+      loadHist: function (x) {
+        var id = '';
+        if (typeof x != 'undefined') {
+          id = x.target.id;
+        }
+        var that = wfh_script;
+        wfh_script.Loading(true);
+        $.ajax({
+          type: 'POST',
+          url: that.url() + 'LoadHist',
+          context: that,
+          dataType: 'json',
+          cache: false,
+          data: "{context:'" + id + "'}",
+          contentType: "application/json; charset=utf-8"
+        }).done(function (data, status, xhr) {
+          var m = 0;
+          var y = JSON.parse(data.d);
+          if (y.err) {
+            this.failed(y.msg)
+          } else {
+            this.showHist(y);
+          }
+          this.Loading(false);
+        }).fail(function (xhr, status, err) {
+          this.failed(err);
+        });
+      },
+      showHist:function(x){
+        $get('divHist').style.display = 'block';
+        $get('stsHEmp').innerHTML =
+                                     '<div>' + x.hst.cno + '</div>'
+                                   + '<div>' + x.hst.cnm + '</div>'
+                                   + '<div>' + x.hst.cdt + '</div>';
+        var s = '';
+        for (var i = 0; i < x.hst.hist.length; i++) {
+          s += '<div class=\'nt-hst-data\'>'
+              + '<div>' + x.hst.hist[i].cno + '</div>'
+              + '<div>' + x.hst.hist[i].cnm + '</div>'
+              + '<div>' + x.hst.hist[i].cdt + '</div>'
+              + '<div>' + (x.hst.hist[i].sts == true ? 'WFH' : 'WFO') + '</div>'
+              + '</div>';
+        }
+        $get('stsHData').innerHTML = s;
+
+        return false;
+      },
+      hideHist: function () {
+        $get('divHist').style.display = 'none';
+        return false;
+      },
+
       initialize: function () {
         //1.
         var elm = document.getElementsByClassName('c-sts');
@@ -788,6 +918,10 @@
         elm = document.getElementsByClassName('rst-bcc');
         for (var i = 0; i < elm.length; i++) {
           elm[i].addEventListener('click', wfh_script.loadEmp, false);
+        }
+        elm = document.getElementsByClassName('h-sts');
+        for (var i = 0; i < elm.length; i++) {
+          elm[i].addEventListener('click', wfh_script.loadHist, false);
         }
       }
     }

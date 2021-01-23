@@ -50,14 +50,14 @@ Partial Class AF_atnApproverChangeRequest
 				oLC_VerificationRequired.Checked = True
 				oLC_VerifierIDEmployeeName.Enabled = True
 				oLC_VerifierID.Text = oEmp.VerifierID
-				oLC_VerifierIDEmployeeName.Text = oEmp.VerifierIDEmployeeName
-			End If
+        oLC_VerifierIDEmployeeName.Text = oEmp.VerifierIDHRM_Employees.EmployeeName
+      End If
 			If oEmp.ApprovalRequired Then
 				oLC_ApprovalRequired.Checked = True
 				oLC_ApproverIDEmployeeName.Enabled = True
 				oLC_ApproverID.Text = oEmp.ApproverID
-				oLC_ApproverIDEmployeeName.Text = oEmp.ApproverIDEmployeeName
-			End If
+        oLC_ApproverIDEmployeeName.Text = oEmp.ApproverIDHRM_Employees.EmployeeName
+      End If
 		End If
   End Sub
 End Class

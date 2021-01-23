@@ -20,6 +20,7 @@ Partial Class GD_atnProcessedPunchStatus
   Protected Sub LC_CardNo1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles LC_CardNo1.TextChanged
     Session("LC_CardNo") = LC_CardNo1.Text
     Session("LC_CardNoEmployeeName") = LC_CardNoEmployeeName1.Text
+    HttpContext.Current.Session("EmployeeUnderProcess") = LC_CardNo1.Text
     Dim FileName As String = System.IO.Path.GetFileName(System.Web.HttpContext.Current.Request.Url.AbsolutePath)
     If Session("PageNoProvider") = True Then
       SIS.SYS.Utilities.GlobalVariables.PageNo(FileName, HttpContext.Current.Session("LoginID"), 0)

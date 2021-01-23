@@ -35,6 +35,7 @@ Namespace SIS.ATN
     Private _C_ProjectSiteID As String = ""
     Private _CategoryID As String = ""
     Private _EMailID As String = ""
+    Public Property CreditQuarterly As Boolean = False
     Public Property EMailID As String
       Get
         Return _EMailID
@@ -261,14 +262,14 @@ Namespace SIS.ATN
         Return _VerifierIDHRM_Employees
       End Get
     End Property
-    Public Property VerifierIDEmployeeName() As String
-      Get
-        Return _VerifierIDEmployeeName
-      End Get
-      Set(ByVal value As String)
-        _VerifierIDEmployeeName = value
-      End Set
-    End Property
+    'Public Property VerifierIDEmployeeName() As String
+    '  Get
+    '    Return _VerifierIDEmployeeName
+    '  End Get
+    '  Set(ByVal value As String)
+    '    _VerifierIDEmployeeName = value
+    '  End Set
+    'End Property
     Public ReadOnly Property ApproverIDHRM_Employees() As SIS.ATN.atnEmployees
       Get
         If _ApproverIDHRM_Employees Is Nothing Then
@@ -277,14 +278,14 @@ Namespace SIS.ATN
         Return _ApproverIDHRM_Employees
       End Get
     End Property
-    Public Property ApproverIDEmployeeName() As String
-      Get
-        Return _ApproverIDEmployeeName
-      End Get
-      Set(ByVal value As String)
-        _ApproverIDEmployeeName = value
-      End Set
-    End Property
+    'Public Property ApproverIDEmployeeName() As String
+    '  Get
+    '    Return _ApproverIDEmployeeName
+    '  End Get
+    '  Set(ByVal value As String)
+    '    _ApproverIDEmployeeName = value
+    '  End Set
+    'End Property
     Public ReadOnly Property C_CompanyIDHRM_Companies() As SIS.ATN.hrmCompanies
       Get
         If _C_CompanyIDHRM_Companies Is Nothing Then
@@ -495,96 +496,7 @@ Namespace SIS.ATN
       Return Results.ToArray
     End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _CardNo = CType(Reader("CardNo"), String)
-      _EmployeeName = CType(Reader("EmployeeName"), String)
-      _VerificationRequired = CType(Reader("VerificationRequired"), Boolean)
-      If Convert.IsDBNull(Reader("VerifierID")) Then
-        _VerifierID = String.Empty
-      Else
-        _VerifierID = CType(Reader("VerifierID"), String)
-      End If
-      _ApprovalRequired = CType(Reader("ApprovalRequired"), Boolean)
-      If Convert.IsDBNull(Reader("ApproverID")) Then
-        _ApproverID = String.Empty
-      Else
-        _ApproverID = CType(Reader("ApproverID"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_DateOfJoining")) Then
-        _C_DateOfJoining = String.Empty
-      Else
-        _C_DateOfJoining = CType(Reader("C_DateOfJoining"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_DateOfReleaving")) Then
-        _C_DateOfReleaving = String.Empty
-      Else
-        _C_DateOfReleaving = CType(Reader("C_DateOfReleaving"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_CompanyID")) Then
-        _C_CompanyID = String.Empty
-      Else
-        _C_CompanyID = CType(Reader("C_CompanyID"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_DivisionID")) Then
-        _C_DivisionID = String.Empty
-      Else
-        _C_DivisionID = CType(Reader("C_DivisionID"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_OfficeID")) Then
-        _C_OfficeID = String.Empty
-      Else
-        _C_OfficeID = CType(Reader("C_OfficeID"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_DepartmentID")) Then
-        _C_DepartmentID = String.Empty
-      Else
-        _C_DepartmentID = CType(Reader("C_DepartmentID"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_DesignationID")) Then
-        _C_DesignationID = String.Empty
-      Else
-        _C_DesignationID = CType(Reader("C_DesignationID"), String)
-      End If
-      _ActiveState = CType(Reader("ActiveState"), Boolean)
-      If Convert.IsDBNull(Reader("C_ConfirmedOn")) Then
-        _C_ConfirmedOn = String.Empty
-      Else
-        _C_ConfirmedOn = CType(Reader("C_ConfirmedOn"), String)
-      End If
-      If Convert.IsDBNull(Reader("C_ProjectSiteID")) Then
-        _C_ProjectSiteID = String.Empty
-      Else
-        _C_ProjectSiteID = CType(Reader("C_ProjectSiteID"), String)
-      End If
-      If Convert.IsDBNull(Reader("VerifierID")) Then
-        _VerifierIDEmployeeName = String.Empty
-      Else
-        _VerifierIDEmployeeName = Reader("HRM_Employees1_EmployeeName") & " [" & CType(Reader("VerifierID"), String) & "]"
-      End If
-      _VerifierIDHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees1", Reader)
-      If Convert.IsDBNull(Reader("ApproverID")) Then
-        _ApproverIDEmployeeName = String.Empty
-      Else
-        _ApproverIDEmployeeName = Reader("HRM_Employees2_EmployeeName") & " [" & CType(Reader("ApproverID"), String) & "]"
-      End If
-      _Contractual = CType(Reader("Contractual"), Boolean)
-      _ApproverIDHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees2", Reader)
-      _C_CompanyIDHRM_Companies = New SIS.ATN.hrmCompanies("HRM_Companies3", Reader)
-      _C_DivisionIDHRM_Divisions = New SIS.ATN.hrmDivisions("HRM_Divisions4", Reader)
-      _C_OfficeIDHRM_Offices = New SIS.ATN.hrmOffices("HRM_Offices5", Reader)
-      _C_DepartmentIDHRM_Departments = New SIS.ATN.hrmDepartments("HRM_Departments6", Reader)
-      _C_DesignationIDHRM_Designations = New SIS.ATN.hrmDesignations("HRM_Designations7", Reader)
-      If Convert.IsDBNull(Reader("CategoryID")) Then
-        _CategoryID = ""
-      Else
-        _CategoryID = CType(Reader("CategoryID"), String)
-      End If
-      If Convert.IsDBNull(Reader("EMailID")) Then
-        _EMailID = ""
-      Else
-        _EMailID = CType(Reader("EMailID"), String)
-      End If
-
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
     Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
       On Error Resume Next

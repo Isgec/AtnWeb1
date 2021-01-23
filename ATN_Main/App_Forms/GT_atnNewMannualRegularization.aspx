@@ -15,8 +15,9 @@
             lgValidate.SplitClickToggleTypes = false;
             lgValidate.ASCanBeApplied = true;
             lgValidate.ADCanBeApplied = true;
+            lgValidate.MLCanBeApplied = true;
           </script>
-          <div id="frmdiv" class="ui-widget-content minipage">
+          <div id="frmdiv" class="ui-widget-content minipage" style="min-height:400px;">
             <table style="margin: auto">
               <tr>
                 <td class="alignright">
@@ -24,7 +25,6 @@
                 </td>
                 <td style="padding-left: 5px;">
                   <script type="text/javascript">
-
                     function LC_CardNo1_AutoCompleteExtender_Selected(sender, e) {
                       var LC_CardNo1 = $get('<%= LC_CardNo1.ClientID %>');
                       LC_CardNo1.value = e.get_value();
@@ -32,7 +32,7 @@
                     }
                   </script>
                   <asp:TextBox ID="LC_CardNo1" runat="Server" AutoCompleteType="None" CssClass="mytxt" Style="display: none" Width="40px" />
-                  <asp:TextBox ID="LC_CardNoEmployeeName1" runat="Server" AutoCompleteType="None" CssClass="mytxt" Width="300px" onfocus='this.value.select();' />
+                  <asp:TextBox ID="LC_CardNoEmployeeName1" runat="Server" AutoCompleteType="None" CssClass="mytxt" Width="300px" onfocus='return this.select();' />
                   <AJX:AutoCompleteExtender ID="LC_CardNo1_AutoCompleteExtender" runat="Server" CompletionInterval="100" CompletionListCssClass="autocomplete_completionListElement" CompletionListHighlightedItemCssClass="autocomplete_highlightedListItem" CompletionListItemCssClass="autocomplete_listItem" CompletionSetCount="10" FirstRowSelected="true" MinimumPrefixLength="1" OnClientItemSelected="LC_CardNo1_AutoCompleteExtender_Selected" ServiceMethod="CardNoCompletionList" TargetControlID="LC_CardNoEmployeeName1" />
                 </td>
                 <td style="padding-left: 5px;">
@@ -83,7 +83,6 @@
             </div>
             <div id="internal" class="sis_msg" enableviewstate="false" style="display: none; border: 3pt outset #C0C0C0; background-color: #003300; width: 400px; min-height: 50px; text-align: center; vertical-align: middle">
             </div>
-          </div>
           </div>
         </ContentTemplate>
         <Triggers>

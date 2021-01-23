@@ -112,39 +112,7 @@ Namespace SIS.ATN
       Return _RecordCount
     End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _LeaveApplID = Ctype(Reader("LeaveApplID"),Int32)
-      If Convert.IsDBNull(Reader("ApprovedBy")) Then
-        _ApprovedBy = String.Empty
-      Else
-        _ApprovedBy = Ctype(Reader("ApprovedBy"), String)
-      End If
-			_ApplStatusID = CType(Reader("ApplStatusID"), Int32)
-			_ApplicationCount = CType(Reader("ApplicationCount"), Int32)
-			If Convert.IsDBNull(Reader("EMailID")) Then
-				_EMailID = String.Empty
-			Else
-				_EMailID = CType(Reader("EMailID"), String)
-			End If
-			_FinYear = CType(Reader("FinYear"), String)
-			_ApprovedByHRM_Employees = New SIS.ATN.atnEmployees("HRM_Employees1", Reader)
-		End Sub
-    Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _LeaveApplID = Ctype(Reader(AliasName & "_LeaveApplID"),Int32)
-      If Convert.IsDBNull(Reader(AliasName & "_ApprovedBy")) Then
-        _ApprovedBy = String.Empty
-      Else
-        _ApprovedBy = Ctype(Reader(AliasName & "_ApprovedBy"), String)
-      End If
-			If Convert.IsDBNull(Reader(AliasName & "_EMailID")) Then
-				_EMailID = String.Empty
-			Else
-				_EMailID = CType(Reader(AliasName & "_EMailID"), String)
-			End If
-			_ApplStatusID = CType(Reader(AliasName & "_ApplStatusID"), Int32)
-			_ApplicationCount = CType(Reader(AliasName & "_ApplicationCount"), Int32)
-			_FinYear = CType(Reader(AliasName & "_FinYear"), String)
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
     Public Sub New()
     End Sub

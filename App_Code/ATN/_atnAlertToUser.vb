@@ -222,61 +222,7 @@ Namespace SIS.ATN
       Return _RecordCount
     End Function
     Public Sub New(ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _CardNo = Ctype(Reader("CardNo"),String)
-      If Convert.IsDBNull(Reader("AttenMonth")) Then
-        _AttenMonth = String.Empty
-      Else
-        _AttenMonth = Ctype(Reader("AttenMonth"), String)
-      End If
-      _EmployeeName = Ctype(Reader("EmployeeName"),String)
-      If Convert.IsDBNull(Reader("SFinalValue")) Then
-        _SFinalValue = String.Empty
-      Else
-        _SFinalValue = Ctype(Reader("SFinalValue"), String)
-      End If
-      _Designation_Description = Ctype(Reader("Designation_Description"),String)
-      _Department_Description = Ctype(Reader("Department_Description"),String)
-      _Office_Description = Ctype(Reader("Office_Description"),String)
-      If Convert.IsDBNull(Reader("FinYear")) Then
-        _FinYear = String.Empty
-      Else
-        _FinYear = Ctype(Reader("FinYear"), String)
-      End If
-      If Convert.IsDBNull(Reader("EMailID")) Then
-        _EMailID = String.Empty
-      Else
-        _EMailID = Ctype(Reader("EMailID"), String)
-      End If
-      _FK_Dummy1 = New SIS.ATN.atnMonths("ATN_Months1",Reader)
-    End Sub
-    Public Sub New(ByVal AliasName As String, ByVal Reader As SqlDataReader)
-      On Error Resume Next
-      _CardNo = Ctype(Reader(AliasName & "_CardNo"),String)
-      If Convert.IsDBNull(Reader(AliasName & "_AttenMonth")) Then
-        _AttenMonth = String.Empty
-      Else
-        _AttenMonth = Ctype(Reader(AliasName & "_AttenMonth"), String)
-      End If
-      _EmployeeName = Ctype(Reader(AliasName & "_EmployeeName"),String)
-      If Convert.IsDBNull(Reader(AliasName & "_SFinalValue")) Then
-        _SFinalValue = String.Empty
-      Else
-        _SFinalValue = Ctype(Reader(AliasName & "_SFinalValue"), String)
-      End If
-      _Designation_Description = Ctype(Reader(AliasName & "_Designation_Description"),String)
-      _Department_Description = Ctype(Reader(AliasName & "_Department_Description"),String)
-      _Office_Description = Ctype(Reader(AliasName & "_Office_Description"),String)
-      If Convert.IsDBNull(Reader(AliasName & "_FinYear")) Then
-        _FinYear = String.Empty
-      Else
-        _FinYear = Ctype(Reader(AliasName & "_FinYear"), String)
-      End If
-      If Convert.IsDBNull(Reader(AliasName & "_EMailID")) Then
-        _EMailID = String.Empty
-      Else
-        _EMailID = Ctype(Reader(AliasName & "_EMailID"), String)
-      End If
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
     End Sub
     Public Sub New()
     End Sub

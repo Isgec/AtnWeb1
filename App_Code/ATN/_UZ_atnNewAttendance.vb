@@ -5,94 +5,76 @@ Imports System.Data.SqlClient
 Imports System.ComponentModel
 Namespace SIS.ATN
 	Partial Public Class atnNewAttendance
-		Private _HoliDay As Boolean = False
-		Public SiteAttendance As Boolean = False
-		Public SiteAttendanceVerified As Boolean = False
-		Public SiteAttendanceVerifiedBy As String = ""
-    Private _SiteAttendanceVerifiedOn As String = ""
-    Private _OfficeID As String = ""
-    Public Property OfficeID As String
+
+    Public Property ForeColor() As System.Drawing.Color
       Get
-        Return _OfficeID
-      End Get
-      Set(value As String)
-        If Convert.IsDBNull(value) Then
-          _OfficeID = ""
-        Else
-          _OfficeID = value
+        If _Applied1LeaveTypeID <> _Posted1LeaveTypeID Or _Applied2LeaveTypeID <> _Posted2LeaveTypeID Then
+          Return Drawing.Color.Magenta
         End If
+        Return Drawing.Color.Blue
+      End Get
+      Set(ByVal value As System.Drawing.Color)
+
       End Set
     End Property
-		Public Property SiteAttendanceVerifiedOn() As String
-			Get
-				If Not _SiteAttendanceVerifiedOn = String.Empty Then
-					Return Convert.ToDateTime(_SiteAttendanceVerifiedOn).ToString("dd/MM/yyyy")
-				End If
-				Return _SiteAttendanceVerifiedOn
-			End Get
-			Set(ByVal value As String)
-				If Convert.IsDBNull(value) Then
-					_SiteAttendanceVerifiedOn = ""
-				Else
-					_SiteAttendanceVerifiedOn = value
-				End If
-			End Set
-		End Property
+    Private Function getLGType(ByVal SqlType As SqlDbType) As TypeCode
+      Dim tmp As TypeCode
+      Select Case SqlType
+        Case SqlDbType.BigInt
+          tmp = TypeCode.Int64
+        Case SqlDbType.Bit
+          tmp = TypeCode.Boolean
+        Case SqlDbType.Char
+          tmp = TypeCode.Char
+        Case SqlDbType.DateTime
+          tmp = TypeCode.DateTime
+        Case SqlDbType.Decimal
+          tmp = TypeCode.Decimal
+        Case SqlDbType.Int
+          tmp = TypeCode.Int32
+        Case SqlDbType.NVarChar
+          tmp = TypeCode.String
+        Case SqlDbType.Float
+          tmp = TypeCode.Single
+      End Select
+      Return tmp
+    End Function
 
-		Public Property ForeColor() As System.Drawing.Color
-			Get
-				If _Applied1LeaveTypeID <> _Posted1LeaveTypeID Or _Applied2LeaveTypeID <> _Posted2LeaveTypeID Then
-					Return Drawing.Color.Magenta
-				End If
-				Return Drawing.Color.Blue
-			End Get
-			Set(ByVal value As System.Drawing.Color)
+    Private Shared Sub SetPunch9Time(ByVal Record As SIS.ATN.atnNewAttendance)
+      With Record
+        If .Punch2Time <> String.Empty Then
+          If .Punch2Time > "18.15" Then
+            If .Punch9Time >= "17.45" And .Punch9Time <= "18.15" Then
+              'do nothing, time has allready been derived
+            Else
+              'Else derive time
+              Dim aa As Random = New Random
+              Dim bb As Double = 0
+              Do While True
+                bb = aa.NextDouble()
+                If bb > 0.46 And bb <= 0.6 Then
+                  Exit Do
+                End If
+                If bb > 0.01 And bb <= 0.15 Then
+                  Exit Do
+                End If
+              Loop
+              If bb > 0.01 And bb <= 0.15 Then
+                .Punch9Time = FormatNumber(18 + bb, 2)
+              Else
+                .Punch9Time = FormatNumber(17 + bb, 2)
+              End If
+            End If
+          Else
+            .Punch9Time = .Punch2Time
+          End If
+        Else
+          .Punch9Time = ""
+        End If
+      End With
+    End Sub
 
-			End Set
-		End Property
-		Public Property HoliDay() As Boolean
-			Get
-				Return _HoliDay
-			End Get
-			Set(ByVal value As Boolean)
-				_HoliDay = value
-			End Set
-		End Property
-		Private Shared Sub SetPunch9Time(ByVal Record As SIS.ATN.atnNewAttendance)
-			With Record
-				If .Punch2Time <> String.Empty Then
-					If .Punch2Time > "18.15" Then
-						If .Punch9Time >= "17.45" And .Punch9Time <= "18.15" Then
-							'do nothing, time has allready been derived
-						Else
-							'Else derive time
-							Dim aa As Random = New Random
-							Dim bb As Double = 0
-							Do While True
-								bb = aa.NextDouble()
-								If bb > 0.46 And bb <= 0.6 Then
-									Exit Do
-								End If
-								If bb > 0.01 And bb <= 0.15 Then
-									Exit Do
-								End If
-							Loop
-							If bb > 0.01 And bb <= 0.15 Then
-								.Punch9Time = FormatNumber(18 + bb, 2)
-							Else
-								.Punch9Time = FormatNumber(17 + bb, 2)
-							End If
-						End If
-					Else
-						.Punch9Time = .Punch2Time
-					End If
-				Else
-					.Punch9Time = ""
-				End If
-			End With
-		End Sub
-
-		Public Shared Function GetAttendanceByApplHeaderID(ByVal ApplHeaderID As Int32) As List(Of SIS.ATN.atnNewAttendance)
+    Public Shared Function GetAttendanceByApplHeaderID(ByVal ApplHeaderID As Int32) As List(Of SIS.ATN.atnNewAttendance)
 			Dim Results As List(Of SIS.ATN.atnNewAttendance) = Nothing
 			Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
 				Using Cmd As SqlCommand = Con.CreateCommand()
