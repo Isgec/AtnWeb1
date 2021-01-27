@@ -42,7 +42,7 @@
 	}
 </script>
     <asp:Label ID="dummy" runat="server" Text="dummy" style="display:none" ></asp:Label>
-    <asp:Panel ID="pnlIpir" runat="server" Height="150px" Width="700px"  CssClass="modalPopup">
+    <asp:Panel ID="pnlIpir" runat="server" Height="150px" Width="780px"  CssClass="modalPopup">
       <table style="width: 100%">
         <tr>
           <td style="background-color: Navy">
@@ -112,6 +112,9 @@
 							</td>
 							<td>
 								<input type="button" id="AS" value="AS" onclick="lc_updatn.updatnSave(this);" title="Accumulated Sick" />
+							</td>
+							<td>
+								<input type="button" id="Z8" value="Z8" onclick="lc_updatn.updatnSave(this);" title="#*PL-2020" />
 							</td>
 							<td>
 								<input type="button" id="BLANK" value="--" onclick="lc_updatn.updatnSave(this);" title="Not known" />
