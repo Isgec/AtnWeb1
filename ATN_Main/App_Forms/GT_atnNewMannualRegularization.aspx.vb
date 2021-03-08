@@ -256,6 +256,7 @@
           Pnl.BorderColor = Drawing.Color.Pink
           Pnl.BorderStyle = BorderStyle.Solid
           Pnl.BorderWidth = 1
+          Pnl.BackColor = Drawing.Color.LightYellow
           Pnl.Height = 100
           Pnl.Style("padding-top") = "4px"
           Dim tTbl As New Table

@@ -39,6 +39,7 @@ Namespace SIS.ATN
         Exit Sub
       End If
       Dim oApl As SIS.ATN.atnApplHeader = SIS.ATN.atnApplHeader.GetByID(ApplHeaderID)
+      Dim oDys As List(Of SIS.ATN.atnAttendance) = Nothing
       Dim TmpApplStatusID As Integer = oApl.ApplStatusID
       Select Case TmpApplStatusID
         Case 2 ' Under Verification
@@ -49,6 +50,41 @@ Namespace SIS.ATN
           oApl.ApprovalRemark = IIf(Remarks = String.Empty, "Approved", Remarks)
           oApl.ApprovalOn = Now
           oApl.ApplStatusID = IIf(oApl.SanctionRequired, 4, 5)
+          'Spl. Sanction for OD
+          If Convert.ToBoolean(ConfigurationManager.AppSettings("ODSanctionRequired")) Then
+            oDys = SIS.ATN.atnAttendance.GetAttendanceByApplHeaderID(ApplHeaderID)
+            'Check for Spl. sanction Required Based on OD
+            Dim odFound As Boolean = False
+            For Each oDy As SIS.ATN.atnAttendance In oDys
+              If oDy.Posted Then Continue For
+              If oDy.Applied1LeaveTypeID = "OD" Or oDy.Applied2LeaveTypeID = "OD" Then
+                If oDy.Punch1Time <> "" And oDy.Punch2Time <> "" Then
+                  If Convert.ToInt32(oDy.OfficeID) = enumOffices.Pune Then
+                    If Convert.ToDecimal(oDy.Punch1Time) > 9.3 And Convert.ToDecimal(oDy.Punch1Time) < 10.0 Then
+                      odFound = True
+                      Exit For
+                    End If
+                  Else
+                    If Convert.ToDecimal(oDy.Punch1Time) > 9.15 And Convert.ToDecimal(oDy.Punch1Time) < 9.45 Then
+                      odFound = True
+                      Exit For
+                    End If
+                  End If
+                End If
+              End If
+            Next
+            If odFound Then
+              Dim emp As SIS.ATN.newHrmEmployees = SIS.ATN.newHrmEmployees.newHrmEmployeesGetByID(oApl.CardNo)
+              If emp.TASanctioningAuthority <> "" Then
+                oApl.SanctionedBy = emp.TASanctioningAuthority
+              Else
+                oApl.SanctionedBy = "2324"
+              End If
+              oApl.ApplStatusID = atnAplStates.UnderSanction
+              oApl.SanctionRequired = True
+            End If
+          End If
+          '================Spl OD================
         Case 4  'Under Sanction
           oApl.SanctionRemark = IIf(Remarks = String.Empty, "Sanctioned", Remarks)
           oApl.SanctionOn = Now
@@ -60,7 +96,9 @@ Namespace SIS.ATN
           oApl.PostedBy = HttpContext.Current.Session("LoginID")
       End Select
       SIS.ATN.atnApplHeader.Update(oApl)
-      Dim oDys As List(Of SIS.ATN.atnAttendance) = SIS.ATN.atnAttendance.GetAttendanceByApplHeaderID(ApplHeaderID)
+      If oDys Is Nothing Then
+        oDys = SIS.ATN.atnAttendance.GetAttendanceByApplHeaderID(ApplHeaderID)
+      End If
       For Each oDy As SIS.ATN.atnAttendance In oDys
         If oDy.Posted Then Continue For
         oDy.ApplStatusID = oApl.ApplStatusID

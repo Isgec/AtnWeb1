@@ -35,6 +35,7 @@ Namespace SIS.ATN
     Private _Posted1LeaveTypeIDATN_LeaveTypes As SIS.ATN.atnLeaveTypes
     Private _Posted2LeaveTypeIDATN_LeaveTypes As SIS.ATN.atnLeaveTypes
     Private _ApplStatusIDATN_ApplicationStatus As SIS.ATN.atnApplicationStatus
+    Public Property OfficeID As String = ""
     Public Property AttenID() As Int32
       Get
         Return _AttenID

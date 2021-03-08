@@ -6,7 +6,20 @@
   Protected Sub LC_CardNo1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles LC_CardNo1.TextChanged
     Session("LC_CardNo") = LC_CardNo1.Text
     Session("LC_CardNoEmployeeName") = LC_CardNoEmployeeName1.Text
-    Page_Load(sender, e)
+    Dim CardNo As String = LC_CardNo1.Text
+    If CardNo = String.Empty Then
+      Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence")
+      DrawTblDates(oLTs, True)
+      Exit Sub
+    End If
+    Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(CardNo)
+    Dim newRule2021 As Boolean = False
+    If Convert.ToInt32(oEmp.C_OfficeID) <> hrmOffices.Site And Convert.ToInt32(Session("FinYear")) >= 2021 Then
+      newRule2021 = True
+    End If
+    LoadIncompleteAttendance(oEmp, newRule2021)
+
+    'Page_Load(sender, e)
   End Sub
   <System.Web.Services.WebMethod(EnableSession:=True)> _
 	<System.Web.Script.Services.ScriptMethod()> _
@@ -117,7 +130,7 @@
 
 
       For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-        If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
+        'If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
         If newRule2021 Then If ((Not oLT.ApplyiableOffice) Or (Not oLT.MainType)) Then Continue For
         If Not newRule2021 Then If ((Not oLT.Applyiable) Or (Not oLT.MainType)) Then Continue For
         Col = New TableCell
@@ -141,6 +154,7 @@
           Pnl.BorderColor = Drawing.Color.Pink
           Pnl.BorderStyle = BorderStyle.Solid
           Pnl.BorderWidth = 1
+          Pnl.BackColor = Drawing.Color.LightYellow
           Pnl.Height = 100
           Pnl.Style("padding-top") = "4px"
           Dim tTbl As New Table
@@ -254,7 +268,7 @@
       Tbl.Style("display") = "none"
       Tbl.Style("position") = "absolute"
       For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-        If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
+        'If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
         If newRule2021 Then If ((Not oLT.ApplyiableOffice) Or (oLT.MainType)) Then Continue For
         If Not newRule2021 Then If ((Not oLT.Applyiable) Or (oLT.MainType)) Then Continue For
         sRow = New TableRow
@@ -329,7 +343,7 @@
     mStr = mStr & "  var aLTs = new Array();" & vbCrLf
 
     For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-      If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
+      'If oLT.LeaveTypeID <> "OD" And oLT.LeaveTypeID <> "CL" And oLT.LeaveTypeID <> "SL" Then Continue For
       If newRule2021 Then If (Not oLT.ApplyiableOffice) Then Continue For
       If Not newRule2021 Then If (Not oLT.Applyiable) Then Continue For
       mStr = mStr & "  aLTs[" & I.ToString & "]='" & oLT.LeaveTypeID & "';" & vbCrLf

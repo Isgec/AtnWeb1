@@ -1,18 +1,25 @@
-<%@ Page Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="false" CodeFile="GF_atnExecuteChangeRequest.aspx.vb" Inherits="GF_atnExecuteChangeRequest" title="Maintain List: Approver/Verifier Change Request" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="cph1" Runat="Server">
-<div id="div1" class="page">
-    <div id="div2" class="caption">
-			<asp:Label ID="LabelatnAppliedApplications" runat="server" Font-Bold="true" Font-Size="14px" Text="List Approver/Verifier Change Request"></asp:Label>
-    </div>
-    <div id="div3" class="pagedata">
-<asp:UpdatePanel ID="UpdatePanel1" runat="server">
+<%@ Page Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="False" CodeFile="GF_atnExecuteChangeRequest.aspx.vb" Inherits="GF_atnExecuteChangeRequest" title="Maintain List: Execute Change Request" %>
+<asp:Content ID="CPHatnExecuteChangeRequest" ContentPlaceHolderID="cph1" Runat="Server">
+<div class="ui-widget-content page">
+<div class="caption">
+    <asp:Label ID="LabelatnExecuteChangeRequest" runat="server" Text="&nbsp;List: Execute Change Request"></asp:Label>
+</div>
+<div class="pagedata">
+<asp:UpdatePanel ID="UPNLatnExecuteChangeRequest" runat="server">
   <ContentTemplate>
+    <table width="100%"><tr><td class="sis_formview"> 
     <LGM:ToolBar0 
-      ID = "ToolBar0_1"
+      ID = "TBLatnExecuteChangeRequest"
       ToolType = "lgNMGrid"
+      EditUrl = "~/ATN_Main/App_Edit/EF_atnExecuteChangeRequest.aspx"
+      EnableAdd = "False"
       ValidationGroup = "atnExecuteChangeRequest"
-      SearchContext = "atnExecuteChangeRequest"
       runat = "server" />
+    <asp:UpdateProgress ID="UPGSatnExecuteChangeRequest" runat="server" AssociatedUpdatePanelID="UPNLatnExecuteChangeRequest" DisplayAfter="100">
+      <ProgressTemplate>
+        <span style="color: #ff0033">Loading...</span>
+      </ProgressTemplate>
+    </asp:UpdateProgress>
     <asp:Panel ID="pnlH" runat="server" CssClass="cph_filter">
       <div style="padding: 5px; cursor: pointer; vertical-align: middle;">
         <div style="float: left;">Filter Records </div>
@@ -27,98 +34,118 @@
     <asp:Panel ID="pnlD" runat="server" CssClass="cp_filter" Height="0">
     <table>
       <tr>
-        <td class="alignright" ><b>User :</b></td>
-        <td style="Padding-left: 5px;">
-					<script type="text/javascript">
-						function LC_UserID1_AutoCompleteExtender_Selected(sender, e) {
-							var LC_UserID1 = $get('<%= LC_UserID1.ClientID %>');
-							LC_UserID1.value = e.get_value();
-							__doPostBack('<%= LC_UserID1.ClientID %>', e.get_value());
-						}
-					</script>
-					<asp:TextBox
-						ID = "LC_UserID1"
-						CssClass = "mytxt"
-						Width = "40px"
-						AutoCompleteType = "None"
-						Style="display:none"
-						Runat="Server" />
-					<asp:TextBox
-						ID = "LC_UserIDEmployeeName1"
-						CssClass = "mytxt"
-						Width = "200px"
-						AutoCompleteType = "None"
-						Runat="Server" />
+        <td class="alignright">
+          <b><asp:Label ID="L_UserID" runat="server" Text="User :" /></b>
+        </td>
+        <td>
+          <asp:TextBox
+            ID = "F_UserID"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text=""
+            onfocus = "return this.select();"
+            AutoCompleteType = "None"
+            onblur= "validate_UserID(this);"
+            Runat="Server" />
+          <asp:Label
+            ID = "F_UserID_Display"
+            Text=""
+            Runat="Server" />
           <AJX:AutoCompleteExtender
-            ID="LC_UserID1_AutoCompleteExtender"
+            ID="ACEUserID"
+            BehaviorID="B_ACEUserID"
+            ContextKey=""
+            UseContextKey="true"
             ServiceMethod="UserIDCompletionList"
-            TargetControlID="LC_UserIDEmployeeName1"
+            TargetControlID="F_UserID"
             CompletionInterval="100"
             FirstRowSelected="true"
             MinimumPrefixLength="1"
-            OnClientItemSelected="LC_UserID1_AutoCompleteExtender_Selected"
+            OnClientItemSelected="ACEUserID_Selected"
+            OnClientPopulating="ACEUserID_Populating"
+            OnClientPopulated="ACEUserID_Populated"
             CompletionSetCount="10"
-						CompletionListCssClass = "autocomplete_completionListElement"
-						CompletionListItemCssClass = "autocomplete_listItem"
-						CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
             Runat="Server" />
         </td>
       </tr>
     </table>
     </asp:Panel>
     <AJX:CollapsiblePanelExtender ID="cpe1" runat="Server" TargetControlID="pnlD" ExpandControlID="pnlH" CollapseControlID="pnlH" Collapsed="True" TextLabelID="lblH" ImageControlID="imgH" ExpandedText="(Hide Filters...)" CollapsedText="(Show Filters...)" ExpandedImage="~/images/ua.png" CollapsedImage="~/images/da.png" SuppressPostBack="true" />
-    <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="100">
-      <ProgressTemplate>
-        <span style="color: #ff0033">Loading...</span>
-      </ProgressTemplate>
-    </asp:UpdateProgress>
-    <asp:Label ID="L_Error" runat="server" Text="" ForeColor="Red"></asp:Label>
-    <asp:GridView runat="server"  SkinId="gv_silver" ID="GridView1" DataSourceID="ObjectDataSource1" DataKeyNames="RequestID">
+    <asp:GridView ID="GVatnExecuteChangeRequest" SkinID="gv_silver" runat="server" DataSourceID="ODSatnExecuteChangeRequest" DataKeyNames="RequestID">
       <Columns>
-        <asp:TemplateField HeaderText="ID" SortExpression="RequestID">
+        <asp:TemplateField HeaderText="EDIT">
           <ItemTemplate>
-            <asp:Label ID="LabelRequestID" runat="server" Text='<%# Bind("RequestID") %>'></asp:Label>
+            <asp:ImageButton ID="cmdEditPage" ValidationGroup="Edit" runat="server" Visible='<%# EVal("Visible") %>' Enabled='<%# EVal("Enable") %>' AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandName="lgEdit" CommandArgument='<%# Container.DataItemIndex %>' />
           </ItemTemplate>
-          <HeaderStyle CssClass="alignCenter" Width="80px" />
           <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="30px" />
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="Requested By" SortExpression="HRM_Employees1_EmployeeName">
+        <asp:TemplateField HeaderText="ID" SortExpression="[ATN_ApproverChangeRequest].[RequestID]">
           <ItemTemplate>
-             <asp:Label ID="LabelUserID" ToolTip='<%#Eval("UserID") %>'  runat="server" Text='<%# Eval("UserIDHRM_Employees.EmployeeName") %>'></asp:Label>
+            <asp:Label ID="LabelRequestID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("RequestID") %>'></asp:Label>
           </ItemTemplate>
-          <HeaderStyle Width="100px" />
-        </asp:TemplateField>
-        <asp:TemplateField HeaderText="Verifier" SortExpression="HRM_Employees2_EmployeeName">
-          <ItemTemplate>
-             <asp:Label ID="LabelVerifierID" ToolTip='<%#Eval("VerifierID") %>' runat="server" Text='<%# Eval("VerifierIDHRM_Employees.EmployeeName") %>'></asp:Label>
-          </ItemTemplate>
-          <HeaderStyle Width="100px" />
-        </asp:TemplateField>
-        <asp:TemplateField HeaderText="Approver" SortExpression="HRM_Employees3_EmployeeName">
-          <ItemTemplate>
-             <asp:Label ID="LabelApproverID" ToolTip='<%#Eval("ApproverID") %>' runat="server" Text='<%# Eval("ApproverIDHRM_Employees.EmployeeName") %>'></asp:Label>
-          </ItemTemplate>
-          <HeaderStyle Width="100px" />
-        </asp:TemplateField>
-        <asp:TemplateField HeaderText="Requested On" SortExpression="RequestedOn">
-          <ItemTemplate>
-            <asp:Label ID="LabelRequestedOn" runat="server" Text='<%# Bind("RequestedOn") %>'></asp:Label>
-          </ItemTemplate>
-        <HeaderStyle Width="80px" />
-        </asp:TemplateField>
-        <asp:TemplateField HeaderText="Execute">
-          <ItemTemplate>
-						<asp:ImageButton ID="Execute" Visible='<%#Eval("EnableEdit") %>' runat="server" ToolTip="Click to Execute" ImageUrl="~/App_Themes/Default/Images/docok.png" CommandName="Execute" CommandArgument='<%# Container.DataItemIndex %>'  />
-          </ItemTemplate>
-          <HeaderStyle CssClass="alignCenter" Width="80px" />
           <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="40px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="User" SortExpression="[HRM_Employees1].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_UserID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("UserID") %>' Text='<%# Eval("HRM_Employees1_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Leave Application Verifier" SortExpression="[HRM_Employees2].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_VerifierID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("VerifierID") %>' Text='<%# Eval("HRM_Employees2_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Leave Application Approver" SortExpression="[HRM_Employees3].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_ApproverID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("ApproverID") %>' Text='<%# Eval("HRM_Employees3_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Verifier" SortExpression="[HRM_Employees4].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TAVerifierID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TAVerifierID") %>' Text='<%# Eval("HRM_Employees4_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Approver" SortExpression="[HRM_Employees5].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TAApproverID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TAApproverID") %>' Text='<%# Eval("HRM_Employees5_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Sanctioning Authority" SortExpression="[HRM_Employees6].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TASA" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TASA") %>' Text='<%# Eval("HRM_Employees6_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Requested On" SortExpression="[ATN_ApproverChangeRequest].[RequestedOn]">
+          <ItemTemplate>
+            <asp:Label ID="LabelRequestedOn" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("RequestedOn") %>'></asp:Label>
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+        <HeaderStyle CssClass="alignCenter" Width="90px" />
         </asp:TemplateField>
         <asp:TemplateField HeaderText="Delete">
           <ItemTemplate>
-						<asp:ImageButton ID="cmdDelete" Visible='<%#Eval("EnableEdit") %>' runat="server" ToolTip="Click to Delete" ImageUrl="~/App_Themes/Default/Images/docreject.png" CommandName="lgDelete" CommandArgument='<%# Container.DataItemIndex %>'/>
+            <asp:ImageButton ID="cmdDelete" ValidationGroup='<%# "Delete" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("DeleteWFVisible") %>' Enabled='<%# EVal("DeleteWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Delete" SkinID="Delete" OnClientClick='<%# "return Page_ClientValidate(""Delete" & Container.DataItemIndex & """) && confirm(""Delete record ?"");" %>' CommandName="DeleteWF" CommandArgument='<%# Container.DataItemIndex %>' />
           </ItemTemplate>
-          <HeaderStyle CssClass="alignCenter" Width="80px" />
           <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="30px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Forward">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdInitiateWF" ValidationGroup='<%# "Initiate" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("InitiateWFVisible") %>' Enabled='<%# EVal("InitiateWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Forward" SkinID="forward" OnClientClick='<%# "return Page_ClientValidate(""Initiate" & Container.DataItemIndex & """) && confirm(""Forward record ?"");" %>' CommandName="InitiateWF" CommandArgument='<%# Container.DataItemIndex %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="30px" />
         </asp:TemplateField>
       </Columns>
       <EmptyDataTemplate>
@@ -126,25 +153,26 @@
       </EmptyDataTemplate>
     </asp:GridView>
     <asp:ObjectDataSource 
-      ID = "ObjectDataSource1"
+      ID = "ODSatnExecuteChangeRequest"
       runat = "server"
       DataObjectTypeName = "SIS.ATN.atnExecuteChangeRequest"
       OldValuesParameterFormatString = "original_{0}"
-      SelectMethod = "SelectList"
+      SelectMethod = "UZ_atnExecuteChangeRequestSelectList"
       TypeName = "SIS.ATN.atnExecuteChangeRequest"
-      SelectCountMethod = "SelectCount"
+      SelectCountMethod = "atnExecuteChangeRequestSelectCount"
       SortParameterName="OrderBy" EnablePaging="True">
       <SelectParameters >
-        <asp:ControlParameter ControlID="LC_UserID1" PropertyName="Text" Name="UserID" Type="String" Size="8" />
-				<asp:Parameter Name="SearchState" Type="Boolean" Direction="Input" DefaultValue="false" />
-				<asp:Parameter Name="SearchText" Type="String" Direction="Input" DefaultValue="" />
+        <asp:ControlParameter ControlID="F_UserID" PropertyName="Text" Name="UserID" Type="String" Size="8" />
+        <asp:Parameter Name="SearchState" Type="Boolean" Direction="Input" DefaultValue="false" />
+        <asp:Parameter Name="SearchText" Type="String" Direction="Input" DefaultValue="" />
       </SelectParameters>
     </asp:ObjectDataSource>
+    <br />
+  </td></tr></table>
   </ContentTemplate>
   <Triggers>
-    <asp:AsyncPostBackTrigger ControlID="GridView1" EventName="PageIndexChanged" />
-    <asp:AsyncPostBackTrigger ControlID="GridView1" EventName="RowCommand" />
-    <asp:AsyncPostBackTrigger ControlID="LC_UserID1" />
+    <asp:AsyncPostBackTrigger ControlID="GVatnExecuteChangeRequest" EventName="PageIndexChanged" />
+    <asp:AsyncPostBackTrigger ControlID="F_UserID" />
   </Triggers>
 </asp:UpdatePanel>
 </div>

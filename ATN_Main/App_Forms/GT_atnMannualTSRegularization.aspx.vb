@@ -6,14 +6,20 @@
   Protected Sub LC_CardNo1_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles LC_CardNo1.TextChanged
     Session("LC_CardNo") = LC_CardNo1.Text
     Session("LC_CardNoEmployeeName") = LC_CardNoEmployeeName1.Text
-    Dim FileName As String = System.IO.Path.GetFileName(System.Web.HttpContext.Current.Request.Url.AbsolutePath)
-    If Session("PageNoProvider") = True Then
-      SIS.SYS.Utilities.GlobalVariables.PageNo(FileName, HttpContext.Current.Session("LoginID"), 0)
-    Else
-      Session("PageNo_" & FileName) = 0
+    Dim CardNo As String = LC_CardNo1.Text
+    If CardNo = String.Empty Then
+      Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence")
+      DrawTblDates(oLTs, True)
+      Exit Sub
     End If
+    Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(CardNo)
+    Dim newRule2021 As Boolean = False
+    If Convert.ToInt32(oEmp.C_OfficeID) <> hrmOffices.Site And Convert.ToInt32(Session("FinYear")) >= 2021 Then
+      newRule2021 = True
+    End If
+    LoadIncompleteAttendance(oEmp, newRule2021)
   End Sub
-	<System.Web.Services.WebMethod(EnableSession:=True)> _
+  <System.Web.Services.WebMethod(EnableSession:=True)> _
 	<System.Web.Script.Services.ScriptMethod()> _
 	 Public Shared Function CardNoCompletionList(ByVal prefixText As String, ByVal count As Integer) As String()
 		Return SIS.ATN.atnEmployees.SelectatnEmployeesAutoCompleteList(prefixText, count)
@@ -27,18 +33,26 @@
 		End If
 	End Sub
 	Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-		LoadIncompleteAttendance(LC_CardNo1.Text)
-	End Sub
-	Private Function LoadIncompleteAttendance(ByVal CardNo As String) As String
-		Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence DESC")
-		If CardNo = String.Empty Then
-			DrawTblDates(oLTs)
-			Return ""
+    Dim CardNo As String = LC_CardNo1.Text
+    If CardNo = "" Then Exit Sub
+    Dim oEmp As SIS.ATN.atnEmployees = SIS.ATN.atnEmployees.GetByID(CardNo)
+    Dim newRule2021 As Boolean = False
+    If Convert.ToInt32(oEmp.C_OfficeID) <> hrmOffices.Site And Convert.ToInt32(Session("FinYear")) >= 2021 Then
+      newRule2021 = True
+    End If
+    LoadIncompleteAttendance(oEmp, newRule2021)
+  End Sub
+  Private Function LoadIncompleteAttendance(oEmp As SIS.ATN.atnEmployees, newRule2021 As Boolean) As String
+    Dim CardNo As String = oEmp.CardNo
+    HttpContext.Current.Session("EmployeeUnderProcess") = CardNo
+    Dim oLTs As List(Of SIS.ATN.atnLeaveTypes) = SIS.ATN.atnLeaveTypes.SelectList("Sequence DESC")
+    If CardNo = String.Empty Then
+      DrawTblDates(oLTs, newRule2021)
+      Return ""
 		End If
-		HttpContext.Current.Session("EmployeeUnderProcess") = CardNo
-		Dim oInAtns As List(Of SIS.ATN.atnProcessedPunch) = SIS.ATN.atnProcessedPunch.NewTSGetAllIncompleteAttendanceWithoutFilter(CardNo)
+    Dim oInAtns As List(Of SIS.ATN.atnProcessedPunch) = SIS.ATN.atnProcessedPunch.NewTSGetAllIncompleteAttendanceWithoutFilter(CardNo)
 
-		Dim Row As TableRow = Nothing
+    Dim Row As TableRow = Nothing
 		Dim Col As TableCell = Nothing
 		Dim Chk As CheckBox = Nothing
 		Dim Txt As TextBox = Nothing
@@ -52,8 +66,8 @@
 		Dim tblWidth As Integer = 0
 
 		If oInAtns.Count > 0 Then
-			tblWidth = DrawTblDates(oLTs)
-			tblRemarks.Style("width") = tblWidth.ToString & "px"
+      tblWidth = DrawTblDates(oLTs, newRule2021)
+      tblRemarks.Style("width") = tblWidth.ToString & "px"
 			tdNoDataFound.Style("display") = "none"
 			tdRemarks.Style("display") = "block"
 		Else
@@ -108,107 +122,106 @@
 			Row.Cells.Add(Col)
 
 
-			For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-				If oLT.LeaveTypeID <> "SH" Then Continue For
-				If oLT.Applyiable Then
-					If oLT.MainType Then
-						Col = New TableCell
-						Chk = New CheckBox
-						Chk.ID = "±" & oLT.LeaveTypeID & "±" & oAt.AttenID
-						Chk.InputAttributes.Add("onclick", "lgValidate.leavetype_click(this);")
-						Chk.ToolTip = oLT.Description
-						Col.Controls.Add(Chk)
-						Col.CssClass = "rowpurple1"
+      For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
+        'If oLT.LeaveTypeID <> "SH" Then Continue For
+        If newRule2021 Then If ((Not oLT.ApplyiableOffice) Or (Not oLT.MainType)) Then Continue For
+        If Not newRule2021 Then If ((Not oLT.Applyiable) Or (Not oLT.MainType)) Then Continue For
+        Col = New TableCell
+        Chk = New CheckBox
+        Chk.ID = "±" & oLT.LeaveTypeID & "±" & oAt.AttenID
+        Chk.InputAttributes.Add("onclick", "lgValidate.leavetype_click(this);")
+        Chk.ToolTip = oLT.Description
+        Col.Controls.Add(Chk)
+        Col.CssClass = "rowpurple1"
 
-						'new code
-						If oLT.LeaveTypeID = "OD" Then
-							Pnl = New Panel
-							Pnl.CssClass = "ok_button"
-							Pnl.Style("display") = "none"
-							Pnl.Style("z-index") = "201"
-							Pnl.ID = "±GG±" & oAt.AttenID
-							Pnl.BorderColor = Drawing.Color.Pink
-							Pnl.BorderStyle = BorderStyle.Solid
-							Pnl.BorderWidth = 1
-							Pnl.Height = 100
-							Pnl.Style("padding-top") = "4px"
-							Dim tTbl As New Table
-							Dim trow As TableRow = Nothing
-							Dim tcol As TableCell = Nothing
+        'new code
+        If oLT.LeaveTypeID = "OD" Then
+          Pnl = New Panel
+          Pnl.CssClass = "ok_button"
+          Pnl.Style("display") = "none"
+          Pnl.Style("z-index") = "201"
+          Pnl.ID = "±GG±" & oAt.AttenID
+          Pnl.BorderColor = Drawing.Color.Pink
+          Pnl.BorderStyle = BorderStyle.Solid
+          Pnl.BorderWidth = 1
+          Pnl.BackColor = Drawing.Color.LightYellow
+          Pnl.Height = 100
+          Pnl.Style("padding-top") = "4px"
+          Dim tTbl As New Table
+          Dim trow As TableRow = Nothing
+          Dim tcol As TableCell = Nothing
 
-							trow = New TableRow
+          trow = New TableRow
 
-							tcol = New TableCell
-							Lbl = New Label
-							Lbl.Text = "<b>Destination: </b>"
-							tcol.Controls.Add(Lbl)
-							trow.Cells.Add(tcol)
-
-
-							tcol = New TableCell
-							Txt = New TextBox
-							Txt.ID = "±HH±" & oAt.AttenID
-							Txt.Width = 100
-							Txt.MaxLength = 30
-							Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
-							tcol.Controls.Add(Txt)
-							trow.Cells.Add(tcol)
-
-							tTbl.Rows.Add(trow)
-
-							trow = New TableRow
-
-							tcol = New TableCell
-							Lbl = New Label
-							Lbl.Text = "<b>Purpose: </b>"
-							tcol.Controls.Add(Lbl)
-							trow.Cells.Add(tcol)
+          tcol = New TableCell
+          Lbl = New Label
+          Lbl.Text = "<b>Destination: </b>"
+          tcol.Controls.Add(Lbl)
+          trow.Cells.Add(tcol)
 
 
-							tcol = New TableCell
-							Txt = New TextBox
-							Txt.ID = "±II±" & oAt.AttenID
-							Txt.Width = 200
-							Txt.Height = 40
-							Txt.TextMode = TextBoxMode.MultiLine
-							Txt.MaxLength = 250
-							Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
-							tcol.Controls.Add(Txt)
-							trow.Cells.Add(tcol)
+          tcol = New TableCell
+          Txt = New TextBox
+          Txt.ID = "±HH±" & oAt.AttenID
+          Txt.Width = 100
+          Txt.MaxLength = 30
+          Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
+          tcol.Controls.Add(Txt)
+          trow.Cells.Add(tcol)
 
-							tTbl.Rows.Add(trow)
+          tTbl.Rows.Add(trow)
 
-							trow = New TableRow
-							tcol = New TableCell
-							tcol.ColumnSpan = 2
-							But = New Image
-							But.Height = 18
-							But.Width = 18
-							But.ImageUrl = "~/App_Themes/Default/Images/closewindow.png"
-							But.ID = "±JJ±" & oAt.AttenID
-							But.Attributes.Add("onclick", "lgValidate.hideODdetail_click(this);")
-							tcol.Controls.Add(But)
-							trow.Cells.Add(tcol)
-							tTbl.Rows.Add(trow)
+          trow = New TableRow
+
+          tcol = New TableCell
+          Lbl = New Label
+          Lbl.Text = "<b>Purpose: </b>"
+          tcol.Controls.Add(Lbl)
+          trow.Cells.Add(tcol)
 
 
-							Pnl.Controls.Add(tTbl)
-							Shd = New AjaxControlToolkit.DropShadowExtender
-							Shd.TargetControlID = Pnl.ClientID
-							Shd.Width = 3
-							Shd.Opacity = 0.5
-							Shd.TrackPosition = True
-							Col.Controls.Add(Pnl)
-							Col.Controls.Add(Shd)
-						End If
-						'end new code
-						Row.Cells.Add(Col)
-					End If
-				End If
-			Next
+          tcol = New TableCell
+          Txt = New TextBox
+          Txt.ID = "±II±" & oAt.AttenID
+          Txt.Width = 200
+          Txt.Height = 40
+          Txt.TextMode = TextBoxMode.MultiLine
+          Txt.MaxLength = 250
+          Txt.Attributes.Add("onblur", "this.value=this.value.replace(/\'/g,'');")
+          tcol.Controls.Add(Txt)
+          trow.Cells.Add(tcol)
+
+          tTbl.Rows.Add(trow)
+
+          trow = New TableRow
+          tcol = New TableCell
+          tcol.ColumnSpan = 2
+          But = New Image
+          But.Height = 18
+          But.Width = 18
+          But.ImageUrl = "~/App_Themes/Default/Images/closewindow.png"
+          But.ID = "±JJ±" & oAt.AttenID
+          But.Attributes.Add("onclick", "lgValidate.hideODdetail_click(this);")
+          tcol.Controls.Add(But)
+          trow.Cells.Add(tcol)
+          tTbl.Rows.Add(trow)
 
 
-			Col = New TableCell
+          Pnl.Controls.Add(tTbl)
+          Shd = New AjaxControlToolkit.DropShadowExtender
+          Shd.TargetControlID = Pnl.ClientID
+          Shd.Width = 3
+          Shd.Opacity = 0.5
+          Shd.TrackPosition = True
+          Col.Controls.Add(Pnl)
+          Col.Controls.Add(Shd)
+        End If
+        'end new code
+        Row.Cells.Add(Col)
+      Next
+
+
+      Col = New TableCell
 			Chk = New CheckBox
 			Chk.ID = "±ZZ±" & oAt.AttenID
 			Chk.InputAttributes.Add("onclick", "lgValidate.split_click(this);")
@@ -241,26 +254,27 @@
 			Tbl.ID = "±EE±" & oAt.AttenID
 			Tbl.Style("display") = "none"
 			Tbl.Style("position") = "absolute"
-			sRow = New TableRow
-			For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-				If oLT.LeaveTypeID <> "SH" Then Continue For
-				If oLT.Applyiable Then
-					If Not oLT.MainType Then
-						sCol = New TableCell
-						sCol.CssClass = "ok_button"
-						Chk = New CheckBox
-						Chk.ID = "±" & oLT.LeaveTypeID & "±" & oAt.AttenID
-						Chk.Text = oLT.LeaveTypeID
-						Chk.ToolTip = oLT.Description
-						Chk.TextAlign = TextAlign.Left
-						Chk.InputAttributes.Add("onclick", "lgValidate.leavetype_click(this);")
-						sCol.Controls.Add(Chk)
-						sRow.Cells.Add(sCol)
-					End If
-				End If
-			Next
-			sCol = New TableCell
-			sCol.CssClass = "ok_button"
+      For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
+        'If oLT.LeaveTypeID <> "SH" Then Continue For
+        If newRule2021 Then If ((Not oLT.ApplyiableOffice) Or (oLT.MainType)) Then Continue For
+        If Not newRule2021 Then If ((Not oLT.Applyiable) Or (oLT.MainType)) Then Continue For
+        sRow = New TableRow
+        sCol = New TableCell
+        sCol.HorizontalAlign = HorizontalAlign.Right
+        sCol.BackColor = Drawing.Color.LightGray
+        Chk = New CheckBox
+        Chk.ID = "±" & oLT.LeaveTypeID & "±" & oAt.AttenID
+        Chk.Text = oLT.Description
+        Chk.ToolTip = oLT.LeaveTypeID
+        Chk.TextAlign = TextAlign.Right
+        Chk.InputAttributes.Add("onclick", "lgValidate.leavetype_click(this);")
+        sCol.Controls.Add(Chk)
+        sRow.Cells.Add(sCol)
+        Tbl.Rows.Add(sRow)
+      Next
+      sRow = New TableRow
+      sCol = New TableCell
+      sCol.CssClass = "ok_button"
 			But = New Image
 			But.Height = 18
 			But.Width = 18
@@ -274,12 +288,11 @@
 			Tbl.BorderColor = Drawing.Color.DarkGreen
 			Tbl.BorderStyle = BorderStyle.Solid
 			Tbl.BorderWidth = 1
-			Tbl.Height = 30
-			Shd = New AjaxControlToolkit.DropShadowExtender
-			Shd.TargetControlID = Tbl.ClientID
+      Shd = New AjaxControlToolkit.DropShadowExtender
+      Shd.TargetControlID = Tbl.ClientID
 			Shd.Width = 3
-			Shd.Opacity = 0.5
-			Shd.TrackPosition = True
+      Shd.Opacity = 0.7
+      Shd.TrackPosition = True
 			Col.Controls.Add(Tbl)
 			Col.Controls.Add(Shd)
 			Col.CssClass = "rowpurple1"
@@ -289,11 +302,11 @@
 		Next
 		Return ""
 	End Function
-	Private Function DrawTblDates(ByVal oLTs As List(Of SIS.ATN.atnLeaveTypes)) As Integer
-		Dim tblWidth As Integer = 325
-		tblDate.Rows.Clear()
+  Private Function DrawTblDates(ByVal oLTs As List(Of SIS.ATN.atnLeaveTypes), newRule2021 As Boolean) As Integer
+    Dim tblWidth As Integer = 300
+    tblDate.Rows.Clear()
 
-		Dim Row As TableRow = Nothing
+    Dim Row As TableRow = Nothing
 		Dim Col As TableCell = Nothing
 
 		Row = New TableRow
@@ -303,57 +316,63 @@
 		Col = New TableCell
 		Col.Text = "DATE"
 		Col.Width = 80
-		Col.CssClass = "rowpurple0"
-		Row.Cells.Add(Col)
+    Col.BackColor = Drawing.Color.LightGray
+    Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+    Row.Cells.Add(Col)
 
-		Col = New TableCell
+    Col = New TableCell
 		Col.Text = "STATUS"
 		Col.Width = 60
-		Col.CssClass = "rowpurple0"
-		Row.Cells.Add(Col)
+    Col.BackColor = Drawing.Color.LightGray
+    Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+    Row.Cells.Add(Col)
 
-		Dim I As Integer = 0
+    Dim I As Integer = 0
 		Dim mStr As String = "<script type=""text/javascript"">" & vbCrLf
 		mStr = mStr & "  var aLTs = new Array();" & vbCrLf
 
-		For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
-			If oLT.LeaveTypeID <> "SH" Then Continue For
-			If oLT.Applyiable Then
-				mStr = mStr & "  aLTs[" & I.ToString & "]='" & oLT.LeaveTypeID & "';" & vbCrLf
-				If oLT.MainType Then
-					Col = New TableCell
-					Col.Text = oLT.LeaveTypeID
-					Col.ToolTip = oLT.Description
-					Col.Width = 145
-					Col.CssClass = "rowpurple0"
-					Row.Cells.Add(Col)
-					tblWidth += 140
-				End If
-				I = I + 1
-			End If
-		Next
-		mStr = mStr & "</script>" & vbCrLf
+    For Each oLT As SIS.ATN.atnLeaveTypes In oLTs
+      'If oLT.LeaveTypeID <> "SH" Then Continue For
+      If newRule2021 Then If (Not oLT.ApplyiableOffice) Then Continue For
+      If Not newRule2021 Then If (Not oLT.Applyiable) Then Continue For
+      mStr = mStr & "  aLTs[" & I.ToString & "]='" & oLT.LeaveTypeID & "';" & vbCrLf
+      If oLT.MainType Then
+        Col = New TableCell
+        Col.Text = oLT.Description
+        Col.ToolTip = oLT.LeaveTypeID
+        Col.Width = 80
+        Col.BackColor = Drawing.Color.LightGray
+        Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+        Row.Cells.Add(Col)
+        tblWidth += 80
+      End If
+      I = I + 1
+    Next
+    mStr = mStr & "</script>" & vbCrLf
 
 		Col = New TableCell
 		Col.Text = "SPLIT"
 		Col.ToolTip = "To apply 1st & 2nd Half separately"
 		Col.Width = 50
-		Col.CssClass = "roworange0"
-		Row.Cells.Add(Col)
+    Col.BackColor = Drawing.Color.LightGray
+    Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+    Row.Cells.Add(Col)
 
-		Col = New TableCell
+    Col = New TableCell
 		Col.Text = "MARKED"
 		Col.Width = 60
-		Col.CssClass = "rowpurple0"
-		Row.Cells.Add(Col)
+    Col.BackColor = Drawing.Color.LightGray
+    Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+    Row.Cells.Add(Col)
 
-		Col = New TableCell
+    Col = New TableCell
 		Col.Text = "OTHER"
 		Col.Width = 50
-		Col.CssClass = "rowpurple0"
-		Row.Cells.Add(Col)
+    Col.BackColor = Drawing.Color.LightGray
+    Col.Attributes.Add("style", "text-align:center;border:1pt solid gray;")
+    Row.Cells.Add(Col)
 
-		tblDate.Rows.Add(Row)
+    tblDate.Rows.Add(Row)
 
 		If Not Page.ClientScript.IsClientScriptBlockRegistered("AdvanceLeaveTypeChanged") Then
 			Page.ClientScript.RegisterClientScriptBlock(GetType(System.String), "AdvanceLeaveTypeChanged", mStr)

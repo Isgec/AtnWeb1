@@ -1,83 +1,129 @@
-<%@ Page Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="false" CodeFile="GF_atnApproverChangeRequest.aspx.vb" Inherits="GF_atnApproverChangeRequest" title="Maintain List: Approver/Verifier Change Request" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="cph1" Runat="Server">
-<div id="div1" class="page">
-<div id="div2" class="caption">
-    <asp:Label ID="LabelatnApproverChangeRequest" runat="server" Text="Approver/Verifier Change Request" ></asp:Label>
+<%@ Page Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="False" CodeFile="GF_atnApproverChangeRequest.aspx.vb" Inherits="GF_atnApproverChangeRequest" title="Maintain List: Approver/Verifier Change Request" %>
+<asp:Content ID="CPHatnApproverChangeRequest" ContentPlaceHolderID="cph1" Runat="Server">
+<div class="ui-widget-content page">
+<div class="caption">
+    <asp:Label ID="LabelatnApproverChangeRequest" runat="server" Text="&nbsp;List: Approver/Verifier Change Request"></asp:Label>
 </div>
-<div id="div3" class="pagedata">
-<asp:UpdatePanel ID="UpdatePanel1" runat="server">
+<div class="pagedata">
+<asp:UpdatePanel ID="UPNLatnApproverChangeRequest" runat="server">
   <ContentTemplate>
+    <table width="100%"><tr><td class="sis_formview"> 
     <LGM:ToolBar0 
-      ID = "ToolBar0_1"
+      ID = "TBLatnApproverChangeRequest"
       ToolType = "lgNMGrid"
-      AddUrl="~/ATN_Main/App_Create/AF_atnApproverChangeRequest.aspx"
+      EditUrl = "~/ATN_Main/App_Edit/EF_atnApproverChangeRequest.aspx"
+      AddUrl = "~/ATN_Main/App_Create/AF_atnApproverChangeRequest.aspx"
       ValidationGroup = "atnApproverChangeRequest"
       runat = "server" />
-    <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="100">
+    <asp:UpdateProgress ID="UPGSatnApproverChangeRequest" runat="server" AssociatedUpdatePanelID="UPNLatnApproverChangeRequest" DisplayAfter="100">
       <ProgressTemplate>
         <span style="color: #ff0033">Loading...</span>
       </ProgressTemplate>
     </asp:UpdateProgress>
-    <asp:GridView runat="server"  SkinId="gv_silver" ID="GridView1" AllowPaging="True" AllowSorting="True" AutoGenerateColumns="False" DataSourceID="ObjectDataSource1" DataKeyNames="RequestID">
+    <asp:GridView ID="GVatnApproverChangeRequest" SkinID="gv_silver" runat="server" DataSourceID="ODSatnApproverChangeRequest" DataKeyNames="RequestID">
       <Columns>
-        <asp:TemplateField>
+        <asp:TemplateField HeaderText="EDIT">
           <ItemTemplate>
-            <asp:ImageButton ID="Edit" Visible='<%#Eval("EnableEdit") %>' runat="server" AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandArgument='<%# Bind("RequestID") %>' OnClick="Edit_Click" />
+            <asp:ImageButton ID="cmdEditPage" ValidationGroup="Edit" runat="server" Visible='<%# EVal("Visible") %>' Enabled='<%# EVal("Enable") %>' AlternateText="Edit" ToolTip="Edit the record." SkinID="Edit" CommandName="lgEdit" CommandArgument='<%# Container.DataItemIndex %>' />
           </ItemTemplate>
-          <HeaderStyle Width="30px" />
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="30px" />
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="ID" SortExpression="RequestID">
+        <asp:TemplateField HeaderText="ID" SortExpression="[ATN_ApproverChangeRequest].[RequestID]">
           <ItemTemplate>
-            <asp:Label ID="LabelRequestID" ForeColor='<%#Eval("ForeColor") %>' runat="server" Text='<%# Bind("RequestID") %>'></asp:Label>
+            <asp:Label ID="LabelRequestID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("RequestID") %>'></asp:Label>
           </ItemTemplate>
-          <HeaderStyle CssClass="alignright" />
-          <ItemStyle CssClass="alignright" />
-          <HeaderStyle Width="40px" />
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="40px" />
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="Verifier" SortExpression="HRM_Employees2_EmployeeName">
+        <asp:TemplateField HeaderText="User" SortExpression="[HRM_Employees1].[EmployeeName]">
           <ItemTemplate>
-             <asp:Label ID="LabelVerifierID" ForeColor='<%#Eval("ForeColor") %>' runat="server" Text='<%# Eval("VerifierIDHRM_Employees.EmployeeName") %>'></asp:Label>
+             <asp:Label ID="L_UserID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("UserID") %>' Text='<%# Eval("HRM_Employees1_EmployeeName") %>'></asp:Label>
           </ItemTemplate>
-          <HeaderStyle Width="200px" />
+          <HeaderStyle Width="100px" />
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="Approver" SortExpression="HRM_Employees3_EmployeeName">
+        <asp:TemplateField HeaderText="Leave Application Verifier" SortExpression="[HRM_Employees2].[EmployeeName]">
           <ItemTemplate>
-             <asp:Label ID="LabelApproverID" ForeColor='<%#Eval("ForeColor") %>' runat="server" Text='<%# Eval("ApproverIDHRM_Employees.EmployeeName") %>'></asp:Label>
+             <asp:Label ID="L_VerifierID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("VerifierID") %>' Text='<%# Eval("HRM_Employees2_EmployeeName") %>'></asp:Label>
           </ItemTemplate>
-          <HeaderStyle Width="200px" />
+          <HeaderStyle Width="100px" />
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="Executed" SortExpression="Executed">
+        <asp:TemplateField HeaderText="Leave Application Approver" SortExpression="[HRM_Employees3].[EmployeeName]">
           <ItemTemplate>
-            <asp:Label ID="LabelExecuted" ForeColor='<%#Eval("ForeColor") %>' runat="server" Text='<%# Bind("Executed") %>'></asp:Label>
+             <asp:Label ID="L_ApproverID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("ApproverID") %>' Text='<%# Eval("HRM_Employees3_EmployeeName") %>'></asp:Label>
           </ItemTemplate>
-        <HeaderStyle Width="50px" />
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Verifier" SortExpression="[HRM_Employees4].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TAVerifierID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TAVerifierID") %>' Text='<%# Eval("HRM_Employees4_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Approver" SortExpression="[HRM_Employees5].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TAApproverID" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TAApproverID") %>' Text='<%# Eval("HRM_Employees5_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="TA Bill Santioning Authority" SortExpression="[HRM_Employees6].[EmployeeName]">
+          <ItemTemplate>
+             <asp:Label ID="L_TASA" runat="server" ForeColor='<%# EVal("ForeColor") %>' Title='<%# EVal("TASA") %>' Text='<%# Eval("HRM_Employees6_EmployeeName") %>'></asp:Label>
+          </ItemTemplate>
+          <HeaderStyle Width="100px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Requested On" SortExpression="[ATN_ApproverChangeRequest].[RequestedOn]">
+          <ItemTemplate>
+            <asp:Label ID="LabelRequestedOn" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("RequestedOn") %>'></asp:Label>
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+        <HeaderStyle CssClass="alignCenter" Width="90px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Executed On" SortExpression="[ATN_ApproverChangeRequest].[ExecutedOn]">
+          <ItemTemplate>
+            <asp:Label ID="LabelExecutedOn" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("ExecutedOn") %>'></asp:Label>
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+        <HeaderStyle CssClass="alignCenter" Width="90px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Executed" SortExpression="[ATN_ApproverChangeRequest].[Executed]">
+          <ItemTemplate>
+            <asp:Label ID="LabelExecuted" runat="server" ForeColor='<%# EVal("ForeColor") %>' Text='<%# Bind("Executed") %>'></asp:Label>
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+        <HeaderStyle CssClass="alignCenter" Width="50px" />
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Forward">
+          <ItemTemplate>
+            <asp:ImageButton ID="cmdInitiateWF" ValidationGroup='<%# "Initiate" & Container.DataItemIndex %>' CausesValidation="true" runat="server" Visible='<%# EVal("InitiateWFVisible") %>' Enabled='<%# EVal("InitiateWFEnable") %>' AlternateText='<%# EVal("PrimaryKey") %>' ToolTip="Forward" SkinID="forward" OnClientClick='<%# "return Page_ClientValidate(""Initiate" & Container.DataItemIndex & """) && confirm(""Forward record ?"");" %>' CommandName="InitiateWF" CommandArgument='<%# Container.DataItemIndex %>' />
+          </ItemTemplate>
+          <ItemStyle CssClass="alignCenter" />
+          <HeaderStyle CssClass="alignCenter" Width="30px" />
         </asp:TemplateField>
       </Columns>
       <EmptyDataTemplate>
         <asp:Label ID="LabelEmpty" runat="server" Font-Size="Small" ForeColor="Red" Text="No record found !!!"></asp:Label>
       </EmptyDataTemplate>
-      <RowStyle BackColor="PaleGoldenrod" />
-      <PagerStyle BackColor="DarkGoldenrod" Font-Bold="True" HorizontalAlign="Center" />
-      <HeaderStyle BackColor="DarkGoldenrod" BorderColor="Black" BorderStyle="Solid" BorderWidth="1pt" />
-      <AlternatingRowStyle BackColor="Bisque" />
     </asp:GridView>
     <asp:ObjectDataSource 
-      ID = "ObjectDataSource1"
+      ID = "ODSatnApproverChangeRequest"
       runat = "server"
       DataObjectTypeName = "SIS.ATN.atnApproverChangeRequest"
       OldValuesParameterFormatString = "original_{0}"
-      SelectMethod = "SelectList"
+      SelectMethod = "UZ_atnApproverChangeRequestSelectList"
       TypeName = "SIS.ATN.atnApproverChangeRequest"
-      SelectCountMethod = "SelectCount"
+      SelectCountMethod = "atnApproverChangeRequestSelectCount"
       SortParameterName="OrderBy" EnablePaging="True">
       <SelectParameters >
-				<asp:Parameter Name="SearchState" Type="Boolean" Direction="Input" DefaultValue="false" />
-				<asp:Parameter Name="SearchText" Type="String" Direction="Input" DefaultValue="" />
+        <asp:Parameter Name="SearchState" Type="Boolean" Direction="Input" DefaultValue="false" />
+        <asp:Parameter Name="SearchText" Type="String" Direction="Input" DefaultValue="" />
       </SelectParameters>
     </asp:ObjectDataSource>
+    <br />
+  </td></tr></table>
   </ContentTemplate>
   <Triggers>
-    <asp:AsyncPostBackTrigger ControlID="GridView1" EventName="PageIndexChanged" />
+    <asp:AsyncPostBackTrigger ControlID="GVatnApproverChangeRequest" EventName="PageIndexChanged" />
   </Triggers>
 </asp:UpdatePanel>
 </div>

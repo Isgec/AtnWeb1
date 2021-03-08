@@ -77,6 +77,7 @@ Namespace SIS.ATN
     Private _FK_HRM_Employees_HRM_Offices As SIS.ATN.hrmOffices = Nothing
     Private _FK_HRM_C_ProjectSiteID As SIS.ATN.idmProjects = Nothing
     Private _FK_HRM_Employees_CategoryID As SIS.ATN.taCategories = Nothing
+    Public Property FieldExpeditor As Boolean = False
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -991,6 +992,7 @@ Namespace SIS.ATN
         .TAVerifier = Record.TAVerifier
         .TASanctioningAuthority = Record.TASanctioningAuthority
         .TAApprover = Record.TAApprover
+        .FieldExpeditor = Record.FieldExpeditor
       End With
       Return SIS.ATN.newHrmEmployees.InsertData(_Rec)
     End Function
@@ -1043,6 +1045,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TAVerifier", SqlDbType.NVarChar, 9, IIf(Record.TAVerifier = "", Convert.DBNull, Record.TAVerifier))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TASanctioningAuthority", SqlDbType.NVarChar, 9, IIf(Record.TASanctioningAuthority = "", Convert.DBNull, Record.TASanctioningAuthority))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TAApprover", SqlDbType.NVarChar, 9, IIf(Record.TAApprover = "", Convert.DBNull, Record.TAApprover))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FieldExpeditor", SqlDbType.Bit, 3, Record.FieldExpeditor)
           Cmd.Parameters.Add("@Return_CardNo", SqlDbType.NVarChar, 9)
           Cmd.Parameters("@Return_CardNo").Direction = ParameterDirection.Output
           Con.Open()
@@ -1099,6 +1102,7 @@ Namespace SIS.ATN
         .TAVerifier = Record.TAVerifier
         .TASanctioningAuthority = Record.TASanctioningAuthority
         .TAApprover = Record.TAApprover
+        .FieldExpeditor = Record.FieldExpeditor
       End With
       Return SIS.ATN.newHrmEmployees.UpdateData(_Rec)
     End Function
@@ -1152,6 +1156,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TAVerifier", SqlDbType.NVarChar, 9, IIf(Record.TAVerifier = "", Convert.DBNull, Record.TAVerifier))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TASanctioningAuthority", SqlDbType.NVarChar, 9, IIf(Record.TASanctioningAuthority = "", Convert.DBNull, Record.TASanctioningAuthority))
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@TAApprover", SqlDbType.NVarChar, 9, IIf(Record.TAApprover = "", Convert.DBNull, Record.TAApprover))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FieldExpeditor", SqlDbType.Bit, 3, Record.FieldExpeditor)
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

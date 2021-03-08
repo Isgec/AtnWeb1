@@ -253,70 +253,71 @@ Namespace SIS.ATN
 			mRet = mRet & "</table>"
 			Return mRet
 		End Function
-		Public Sub New(ByVal Reader As SqlDataReader)
-			On Error Resume Next
-			_AttenID = CType(Reader("AttenID"), Int32)
-			_AttenDate = CType(Reader("AttenDate"), DateTime)
-			_CardNo = CType(Reader("CardNo"), String)
-			If Convert.IsDBNull(Reader("Applied1LeaveTypeID")) Then
-				_Applied1LeaveTypeID = String.Empty
-			Else
-				_Applied1LeaveTypeID = CType(Reader("Applied1LeaveTypeID"), String)
-			End If
-			If Convert.IsDBNull(Reader("Applied2LeaveTypeID")) Then
-				_Applied2LeaveTypeID = String.Empty
-			Else
-				_Applied2LeaveTypeID = CType(Reader("Applied2LeaveTypeID"), String)
-			End If
-			If Convert.IsDBNull(Reader("ApplHeaderID")) Then
-				_ApplHeaderID = String.Empty
-			Else
-				_ApplHeaderID = CType(Reader("ApplHeaderID"), String)
-			End If
-			If Convert.IsDBNull(Reader("ApplStatusID")) Then
-				_ApplStatusID = String.Empty
-			Else
-				_ApplStatusID = CType(Reader("ApplStatusID"), String)
-			End If
-			If Convert.IsDBNull(Reader("Destination")) Then
-				_Destination = String.Empty
-			Else
-				_Destination = CType(Reader("Destination"), String)
-			End If
-			If Convert.IsDBNull(Reader("Purpose")) Then
-				_Purpose = String.Empty
-			Else
-				_Purpose = CType(Reader("Purpose"), String)
-			End If
+    Public Sub New(ByVal Reader As SqlDataReader)
+      SIS.SYS.SQLDatabase.DBCommon.NewObj(Me, Reader)
+      'On Error Resume Next
+      '_AttenID = CType(Reader("AttenID"), Int32)
+      '_AttenDate = CType(Reader("AttenDate"), DateTime)
+      '_CardNo = CType(Reader("CardNo"), String)
+      'If Convert.IsDBNull(Reader("Applied1LeaveTypeID")) Then
+      '  _Applied1LeaveTypeID = String.Empty
+      'Else
+      '  _Applied1LeaveTypeID = CType(Reader("Applied1LeaveTypeID"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("Applied2LeaveTypeID")) Then
+      '  _Applied2LeaveTypeID = String.Empty
+      'Else
+      '  _Applied2LeaveTypeID = CType(Reader("Applied2LeaveTypeID"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("ApplHeaderID")) Then
+      '  _ApplHeaderID = String.Empty
+      'Else
+      '  _ApplHeaderID = CType(Reader("ApplHeaderID"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("ApplStatusID")) Then
+      '  _ApplStatusID = String.Empty
+      'Else
+      '  _ApplStatusID = CType(Reader("ApplStatusID"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("Destination")) Then
+      '  _Destination = String.Empty
+      'Else
+      '  _Destination = CType(Reader("Destination"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("Purpose")) Then
+      '  _Purpose = String.Empty
+      'Else
+      '  _Purpose = CType(Reader("Purpose"), String)
+      'End If
 
-			If Convert.IsDBNull(Reader("HRM_Employees1_EmployeeName")) Then
-				_Employees1_EmployeeName = String.Empty
-			Else
-				_Employees1_EmployeeName = CType(Reader("HRM_Employees1_EmployeeName"), String)
-			End If
+      'If Convert.IsDBNull(Reader("HRM_Employees1_EmployeeName")) Then
+      '  _Employees1_EmployeeName = String.Empty
+      'Else
+      '  _Employees1_EmployeeName = CType(Reader("HRM_Employees1_EmployeeName"), String)
+      'End If
 
-			If Convert.IsDBNull(Reader("ATN_LeaveTypes2_Description")) Then
-				_LeaveTypes2_Description = String.Empty
-			Else
-				_LeaveTypes2_Description = CType(Reader("ATN_LeaveTypes2_Description"), String)
-			End If
-			If Convert.IsDBNull(Reader("ATN_LeaveTypes3_Description")) Then
-				_LeaveTypes3_Description = String.Empty
-			Else
-				_LeaveTypes3_Description = CType(Reader("ATN_LeaveTypes3_Description"), String)
-			End If
-			If Convert.IsDBNull(Reader("ATN_ApplHeader4_ApprovedBy")) Then
-				_ApplHeader4_ApprovedBy = String.Empty
-			Else
-				_ApplHeader4_ApprovedBy = CType(Reader("ATN_ApplHeader4_ApprovedBy"), String)
-			End If
-			If Convert.IsDBNull(Reader("HRM_Employees5_EmployeeName")) Then
-				_Employees5_EmployeeName = String.Empty
-			Else
-				_Employees5_EmployeeName = CType(Reader("HRM_Employees5_EmployeeName"), String)
-			End If
-		End Sub
-		Public Sub New()
+      'If Convert.IsDBNull(Reader("ATN_LeaveTypes2_Description")) Then
+      '  _LeaveTypes2_Description = String.Empty
+      'Else
+      '  _LeaveTypes2_Description = CType(Reader("ATN_LeaveTypes2_Description"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("ATN_LeaveTypes3_Description")) Then
+      '  _LeaveTypes3_Description = String.Empty
+      'Else
+      '  _LeaveTypes3_Description = CType(Reader("ATN_LeaveTypes3_Description"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("ATN_ApplHeader4_ApprovedBy")) Then
+      '  _ApplHeader4_ApprovedBy = String.Empty
+      'Else
+      '  _ApplHeader4_ApprovedBy = CType(Reader("ATN_ApplHeader4_ApprovedBy"), String)
+      'End If
+      'If Convert.IsDBNull(Reader("HRM_Employees5_EmployeeName")) Then
+      '  _Employees5_EmployeeName = String.Empty
+      'Else
+      '  _Employees5_EmployeeName = CType(Reader("HRM_Employees5_EmployeeName"), String)
+      'End If
+    End Sub
+    Public Sub New()
 			'Dummy
 		End Sub
 	End Class

@@ -182,4 +182,29 @@ Public Class WfhService
   End Function
 #End Region
 
+  <WebMethod(EnableSession:=True)>
+  Public Function AlertToUsers(context As String) As String
+    Dim oContext As data = New JavaScriptSerializer().Deserialize(context, GetType(data))
+    Dim err As New List(Of String)
+    Dim listUsers As List(Of SIS.ATN.atnAlertToUser) = SIS.ATN.atnAlertToUser.SelectList(0, 9999, "", False, "", oContext.mon, "")
+    For Each lu As SIS.ATN.atnAlertToUser In listUsers
+      Dim tmp As String = ""
+      Try
+        tmp = lu.EmployeeName & " [" & lu.CardNo & "]"
+        If Not SIS.ATN.atnAlertToUser.SendAlert(lu) Then
+          err.Add(tmp)
+        End If
+      Catch ex As Exception
+        err.Add("Error at " & tmp & " | " & ex.Message)
+      End Try
+    Next
+    Dim jxx As New JavaScriptSerializer()
+    jxx.MaxJsonLength = Integer.MaxValue
+    Return jxx.Serialize(err)
+  End Function
+  Public Class data
+    Public Property mon As String = "02"
+    Public Property varx As Integer = 22
+  End Class
+
 End Class

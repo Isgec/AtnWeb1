@@ -3,8 +3,10 @@ Imports System.Collections.Generic
 Imports System.Data
 Imports System.Data.SqlClient
 Imports System.ComponentModel
+Imports System.Net.Mail
+
 Namespace SIS.ATN
-  <DataObject()> _
+  <DataObject()>
   Partial Public Class atnAlertToUser
     Private Shared _RecordCount As Integer
     Private _CardNo As String = ""
@@ -31,11 +33,11 @@ Namespace SIS.ATN
         Return _AttenMonth
       End Get
       Set(ByVal value As String)
-				 If Convert.IsDBNull(Value) Then
-					 _AttenMonth = ""
-				 Else
-					 _AttenMonth = value
-			   End If
+        If Convert.IsDBNull(Value) Then
+          _AttenMonth = ""
+        Else
+          _AttenMonth = value
+        End If
       End Set
     End Property
     Public Property EmployeeName() As String
@@ -51,11 +53,11 @@ Namespace SIS.ATN
         Return _SFinalValue
       End Get
       Set(ByVal value As String)
-				 If Convert.IsDBNull(Value) Then
-					 _SFinalValue = ""
-				 Else
-					 _SFinalValue = value
-			   End If
+        If Convert.IsDBNull(Value) Then
+          _SFinalValue = ""
+        Else
+          _SFinalValue = value
+        End If
       End Set
     End Property
     Public Property Designation_Description() As String
@@ -87,11 +89,11 @@ Namespace SIS.ATN
         Return _FinYear
       End Get
       Set(ByVal value As String)
-				 If Convert.IsDBNull(Value) Then
-					 _FinYear = ""
-				 Else
-					 _FinYear = value
-			   End If
+        If Convert.IsDBNull(Value) Then
+          _FinYear = ""
+        Else
+          _FinYear = value
+        End If
       End Set
     End Property
     Public Property EMailID() As String
@@ -99,11 +101,11 @@ Namespace SIS.ATN
         Return _EMailID
       End Get
       Set(ByVal value As String)
-				 If Convert.IsDBNull(Value) Then
-					 _EMailID = ""
-				 Else
-					 _EMailID = value
-			   End If
+        If Convert.IsDBNull(Value) Then
+          _EMailID = ""
+        Else
+          _EMailID = value
+        End If
       End Set
     End Property
     Public Property DisplayField() As String
@@ -128,21 +130,21 @@ Namespace SIS.ATN
         Return _FK_Dummy1
       End Get
     End Property
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function GetNewRecord() As SIS.ATN.atnAlertToUser
       Dim Results As SIS.ATN.atnAlertToUser = Nothing
       Results = New SIS.ATN.atnAlertToUser()
       Return Results
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function GetByID(ByVal CardNo As String, ByVal AttenMonth As Int32) As SIS.ATN.atnAlertToUser
       Dim Results As SIS.ATN.atnAlertToUser = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spatnAlertToUserSelectByID"
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo",SqlDbType.NVarChar,CardNo.ToString.Length, CardNo)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AttenMonth",SqlDbType.Int,AttenMonth.ToString.Length, AttenMonth)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@CardNo", SqlDbType.NVarChar, CardNo.ToString.Length, CardNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AttenMonth", SqlDbType.Int, AttenMonth.ToString.Length, AttenMonth)
           Con.Open()
           Dim Reader As SqlDataReader = Cmd.ExecuteReader()
           If Reader.Read() Then
@@ -153,22 +155,22 @@ Namespace SIS.ATN
       End Using
       Return Results
     End Function
-      'Select By ID One Record Filtered Overloaded GetByID
-    <DataObjectMethod(DataObjectMethodType.Select)> _
+    'Select By ID One Record Filtered Overloaded GetByID
+    <DataObjectMethod(DataObjectMethodType.Select)>
     Public Shared Function GetByID(ByVal CardNo As String, ByVal AttenMonth As Int32, ByVal Filter_AttenMonth As Int32) As SIS.ATN.atnAlertToUser
       Return GetByID(CardNo, AttenMonth)
     End Function
-    <DataObjectMethod(DataObjectMethodType.Select)> _
-    Public Shared Function GetByAttenMonth(ByVal AttenMonth As Int32, ByVal OrderBy as String) As List(Of SIS.ATN.atnAlertToUser)
+    <DataObjectMethod(DataObjectMethodType.Select)>
+    Public Shared Function GetByAttenMonth(ByVal AttenMonth As Int32, ByVal OrderBy As String) As List(Of SIS.ATN.atnAlertToUser)
       Dim Results As List(Of SIS.ATN.atnAlertToUser) = Nothing
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           If OrderBy = String.Empty Then OrderBy = "CardNo"
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spatnAlertToUserSelectByAttenMonth"
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AttenMonth",SqlDbType.Int,AttenMonth.ToString.Length, AttenMonth)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@AttenMonth", SqlDbType.Int, AttenMonth.ToString.Length, AttenMonth)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OrderBy", SqlDbType.NVarChar, 50, OrderBy)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear",SqlDbType.NVarChar,4, Global.System.Web.HttpContext.Current.Session("FinYear"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
           Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
           Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
           _RecordCount = -1
@@ -202,7 +204,7 @@ Namespace SIS.ATN
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@startRowIndex", SqlDbType.Int, -1, startRowIndex)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@maximumRows", SqlDbType.Int, -1, maximumRows)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@OrderBy", SqlDbType.NVarChar, 50, orderBy)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, Global.System.Web.HttpContext.Current.Session("FinYear"))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@FinYear", SqlDbType.NVarChar, 4, SIS.SYS.Utilities.ApplicationSpacific.ReadActiveFinYear)
           Cmd.Parameters.Add("@RecordCount", SqlDbType.Int)
           Cmd.Parameters("@RecordCount").Direction = ParameterDirection.Output
           _RecordCount = -1
@@ -226,5 +228,30 @@ Namespace SIS.ATN
     End Sub
     Public Sub New()
     End Sub
+    Public Shared Function SendAlert(ByVal x As SIS.ATN.atnAlertToUser) As Boolean
+      Dim mRet As Boolean = True
+      Try
+        Dim oClient As SmtpClient = New SmtpClient()
+        Dim oMsg As New System.Net.Mail.MailMessage()
+        With oMsg
+          .IsBodyHtml = True
+          .To.Add(x.EMailID)
+          .Subject = "Attendance Regularization for Month: " & MonthName(x.AttenMonth)
+          Dim mStr As String = "<table border=""0"" cellspacing=""0"" cellpadding=""0"">"
+          mStr = mStr & "<tr><td><b>Dear " & x.EmployeeName & ",</b></td></tr>"
+          mStr = mStr & "<tr><td style=""padding-top: 10px"">Your attendance status is absent for <b>" & x.SFinalValue & "</b> day(s) in the month of <b>" & MonthName(x.AttenMonth) & "</b>.</td></tr>"
+          mStr = mStr & "<tr><td>You are requested to regularize it today.</td></tr>"
+          mStr = mStr & "<tr><td style=""padding-top: 10px"">Thanx.</td></tr>"
+          mStr = mStr & "<tr><td style=""padding-top: 10px"">(for further queries contact HR.)</td></tr>"
+          mStr = mStr & "</table>"
+          .Body = "<br/>"
+          .Body &= mStr
+        End With
+        oClient.Send(oMsg)
+      Catch ex As Exception
+        mRet = False
+      End Try
+      Return mRet
+    End Function
   End Class
 End Namespace

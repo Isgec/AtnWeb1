@@ -1004,6 +1004,19 @@
             Runat="Server" />
         </td>
       </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_FieldExpeditor" runat="server" Text="Field Expeditor :" />&nbsp;
+        </td>
+        <td>
+          <asp:CheckBox ID="F_FieldExpeditor"
+           Checked='<%# Bind("FieldExpeditor") %>'
+           CssClass = "mychk"
+           runat="server" />
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
     </table>
     </div>
   </InsertItemTemplate>

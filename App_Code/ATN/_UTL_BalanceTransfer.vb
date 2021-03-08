@@ -291,9 +291,11 @@ Namespace SIS.SYS.Utilities
         '=============================
         For Each _bal As SIS.ATN.lgLedgerBalance In oBals
           If _bal.LeaveType = "Z8" Or _bal.LeaveType = "LT" Or _bal.LeaveType = "Z3" Then
-            Dim tmp As Decimal = 0
-            tmp = SIS.ATN.lgLedgerBalance.LvRoundof((_bal.NewOpening / YrDays) * WorkDays)
-            _bal.NewOpening = tmp
+            If Not oEmp.Contractual Then
+              Dim tmp As Decimal = 0
+              tmp = SIS.ATN.lgLedgerBalance.LvRoundof((_bal.NewOpening / YrDays) * WorkDays)
+              _bal.NewOpening = tmp
+            End If
           End If
         Next
       End If

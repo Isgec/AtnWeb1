@@ -1,184 +1,284 @@
 <%@ Page Language="VB" MasterPageFile="~/MasterPage.master" AutoEventWireup="false" CodeFile="AF_atnApproverChangeRequest.aspx.vb" Inherits="AF_atnApproverChangeRequest" title="Add: Approver/Verifier Change Request" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="cph1" Runat="Server">
-	<div id="div2" class="page" style="width:600px">
-    <div id="div3" class="caption">
-			<asp:Label ID="LabelatnAppliedApplications" runat="server"  Text="&nbsp;Create Approver/Verifier Change Request"></asp:Label>
-    </div>
-    <div id="div4" class="pagedata" style="min-height:300px">
-<asp:UpdatePanel ID="UPNL1" runat="server" >
+<asp:Content ID="CPHatnApproverChangeRequest" ContentPlaceHolderID="cph1" Runat="Server">
+<div id="div1" class="ui-widget-content page">
+<div id="div2" class="caption">
+    <asp:Label ID="LabelatnApproverChangeRequest" runat="server" Text="&nbsp;Add: Approver/Verifier Change Request"></asp:Label>
+</div>
+<div id="div3" class="pagedata">
+<asp:UpdatePanel ID="UPNLatnApproverChangeRequest" runat="server" >
   <ContentTemplate>
-    <LGM:ToolBar0 
-      ID = "ToolBar0_1"
-      ToolType = "lgNMAdd"
-      ValidationGroup = "atnApproverChangeRequest"
-      runat = "server" />
- <asp:FormView ID="FormView1"
-	runat = "server"
-	DataKeyNames = "RequestID"
-	DataSourceID = "ObjectDataSource1"
-	DefaultMode = "Insert" CssClass="sis_formview">
-	<InsertItemTemplate>
-    <script type="text/javascript">
-    	function vrf_click(o) {
-    		var p = document.getElementById('cph1_FormView1_LC_VerifierID1');
-    		var q = document.getElementById('cph1_FormView1_LC_VerifierIDEmployeeName1');
-    		if (o.checked == false) {
-    			p.value = '';
-    			q.value = '';
-    			q.disabled = true;
-    		} else {
-    			q.disabled = false;
-    		}
-
-    	}
-    	function apr_click(o) {
-    		var p = document.getElementById('cph1_FormView1_LC_ApproverID1');
-    		var q = document.getElementById('cph1_FormView1_LC_ApproverIDEmployeeName1');
-    		if (o.checked == false) {
-    			p.value = '';
-    			q.value = '';
-    			q.disabled = true;
-    		} else {
-    			q.disabled = false;
-    		}
-
-    	}
-    </script>
-		<table>
-			<tr>
-				<td class="alignright">
-					<b><asp:Label ID="LabelRequestID" runat="server" Text="ID :" /></b>
-				</td>
-				<td>
-					<asp:Label ID="TextRequestID" runat="server" Text="0" />
-				</td>
-			</tr>
-			<tr>
-				<td class="alignright">
-					<b><asp:Label ID="LabelVerificationRequired" runat="server" Text="Verification Required :" /></b>
-				</td>
-				<td>
-            <asp:CheckBox ID="CheckBoxVerificationRequired"
-						  Checked='<%# Bind("VerificationRequired") %>'
-						  onclick="return vrf_click(this);"
-              runat="server" />
-				</td>
-			</tr>
+  <LGM:ToolBar0 
+    ID = "TBLatnApproverChangeRequest"
+    ToolType = "lgNMAdd"
+    InsertAndStay = "False"
+    ValidationGroup = "atnApproverChangeRequest"
+    runat = "server" />
+<asp:FormView ID="FVatnApproverChangeRequest"
+  runat = "server"
+  DataKeyNames = "RequestID"
+  DataSourceID = "ODSatnApproverChangeRequest"
+  DefaultMode = "Insert" CssClass="sis_formview">
+  <InsertItemTemplate>
+    <div id="frmdiv" class="ui-widget-content minipage">
+    <asp:Label ID="L_ErrMsgatnApproverChangeRequest" runat="server" ForeColor="Red" Font-Bold="true" Text=""></asp:Label>
+    <table style="margin:auto;border: solid 1pt lightgrey">
       <tr>
-        <td class="alignright" ><b>Verifier :</b></td>
-        <td>
-					<asp:TextBox
-						ID = "LC_VerifierID1"
-						CssClass = "mytxt"
-						Width = "40px"
-						Text='<%# Bind("VerifierID") %>'
-						AutoCompleteType = "None"
-						Style="display:none"
-						Runat="Server" />
-					<asp:TextBox
-						ID = "LC_VerifierIDEmployeeName1"
-						Text='<%# Bind("VerifierIDEmployeeName") %>'
-						CssClass = "mytxt"
-						onfocus = "return this.select();"
-						Width = "200px"
-						AutoCompleteType = "None"
-					  Enabled='<%# Eval("VerificationRequired") %>'
-            ToolTip="Enter value for Verifier."
-						Runat="Server" />
-					<AJX:TextBoxWatermarkExtender 
-						ID = "TextBoxWatermarkExtenderVerifierID"
-						runat = "server"
-            WatermarkText="[Enter Verifier]"
-            WatermarkCssClass="watermark"
-						TargetControlID="LC_VerifierIDEmployeeName1" />
+        <td class="alignright">
+          <b><asp:Label ID="L_RequestID" ForeColor="#CC6633" runat="server" Text="ID :" /><span style="color:red">*</span></b>
+        </td>
+        <td colspan="3">
+          <asp:TextBox ID="F_RequestID" Enabled="False" CssClass="mypktxt" Width="88px" runat="server" Text="0" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_VerifierID" runat="server" Text="Leave Application Verifier :" />&nbsp;
+        </td>
+        <td colspan="3">
+          <asp:TextBox
+            ID = "F_VerifierID"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text='<%# Bind("VerifierID") %>'
+            AutoCompleteType = "None"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for Leave Application Verifier."
+            onblur= "script_atnApproverChangeRequest.validate_VerifierID(this);"
+            Runat="Server" />
+          <asp:Label
+            ID = "F_VerifierID_Display"
+            Text='<%# Eval("HRM_Employees2_EmployeeName") %>'
+            CssClass="myLbl"
+            Runat="Server" />
           <AJX:AutoCompleteExtender
-            ID="LC_VerifierID1_AutoCompleteExtender"
+            ID="ACEVerifierID"
+            BehaviorID="B_ACEVerifierID"
+            ContextKey=""
+            UseContextKey="true"
             ServiceMethod="VerifierIDCompletionList"
-            TargetControlID="LC_VerifierIDEmployeeName1"
+            TargetControlID="F_VerifierID"
+            EnableCaching="false"
             CompletionInterval="100"
             FirstRowSelected="true"
             MinimumPrefixLength="1"
-            OnClientItemSelected="LC_VerifierID1_AutoCompleteExtender_Selected"
+            OnClientItemSelected="script_atnApproverChangeRequest.ACEVerifierID_Selected"
+            OnClientPopulating="script_atnApproverChangeRequest.ACEVerifierID_Populating"
+            OnClientPopulated="script_atnApproverChangeRequest.ACEVerifierID_Populated"
             CompletionSetCount="10"
-						CompletionListCssClass = "autocomplete_completionListElement"
-						CompletionListItemCssClass = "autocomplete_listItem"
-						CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
             Runat="Server" />
         </td>
       </tr>
-			<tr>
-				<td class="alignright">
-					<b><asp:Label ID="LabelApprovalRequired" runat="server" Text="Approval Required :" /></b>
-				</td>
-				<td>
-            <asp:CheckBox ID="CheckBoxApprovalRequired"
-						  Checked='<%# Bind("ApprovalRequired") %>'
-						  onclick="return apr_click(this);"
-              runat="server" />
-				</td>
-			</tr>
       <tr>
-        <td class="alignright" ><b>Approver :</b></td>
-        <td>
-					<asp:TextBox
-						ID = "LC_ApproverID1"
-						CssClass = "mytxt"
-						Width = "40px"
-						Text='<%# Bind("ApproverID") %>'
-						AutoCompleteType = "None"
-						Style="display:none"
-						Runat="Server" />
-					<asp:TextBox
-						ID = "LC_ApproverIDEmployeeName1"
-						Text='<%# Bind("ApproverIDEmployeeName") %>'
-						CssClass = "mytxt"
-						onfocus = "return this.select();"
-						Width = "200px"
-						AutoCompleteType = "None"
-					  Enabled='<%# Eval("ApprovalRequired") %>'
-            ToolTip="Enter value for Approver."
-						Runat="Server" />
-					<AJX:TextBoxWatermarkExtender 
-						ID = "TextBoxWatermarkExtenderApproverID"
-						runat = "server"
-            WatermarkText="[Enter Approver]"
-            WatermarkCssClass="watermark"
-						TargetControlID="LC_ApproverIDEmployeeName1" />
+        <td class="alignright">
+          <asp:Label ID="L_ApproverID" runat="server" Text="Leave Application Approver :" /><span style="color:red">*</span>
+        </td>
+        <td colspan="3">
+          <asp:TextBox
+            ID = "F_ApproverID"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text='<%# Bind("ApproverID") %>'
+            AutoCompleteType = "None"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for Leave Application Approver."
+            ValidationGroup = "atnApproverChangeRequest"
+            onblur= "script_atnApproverChangeRequest.validate_ApproverID(this);"
+            Runat="Server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVApproverID"
+            runat = "server"
+            ControlToValidate = "F_ApproverID"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "atnApproverChangeRequest"
+            SetFocusOnError="true" />
+          <asp:Label
+            ID = "F_ApproverID_Display"
+            Text='<%# Eval("HRM_Employees3_EmployeeName") %>'
+            CssClass="myLbl"
+            Runat="Server" />
           <AJX:AutoCompleteExtender
-            ID="LC_ApproverID1_AutoCompleteExtender"
+            ID="ACEApproverID"
+            BehaviorID="B_ACEApproverID"
+            ContextKey=""
+            UseContextKey="true"
             ServiceMethod="ApproverIDCompletionList"
-            TargetControlID="LC_ApproverIDEmployeeName1"
+            TargetControlID="F_ApproverID"
+            EnableCaching="false"
             CompletionInterval="100"
             FirstRowSelected="true"
             MinimumPrefixLength="1"
-            OnClientItemSelected="LC_ApproverID1_AutoCompleteExtender_Selected"
+            OnClientItemSelected="script_atnApproverChangeRequest.ACEApproverID_Selected"
+            OnClientPopulating="script_atnApproverChangeRequest.ACEApproverID_Populating"
+            OnClientPopulated="script_atnApproverChangeRequest.ACEApproverID_Populated"
             CompletionSetCount="10"
-						CompletionListCssClass = "autocomplete_completionListElement"
-						CompletionListItemCssClass = "autocomplete_listItem"
-						CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
             Runat="Server" />
         </td>
       </tr>
-		</table>
-	</InsertItemTemplate>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_TAVerifierID" runat="server" Text="TA Bill Verifier :" />&nbsp;
+        </td>
+        <td colspan="3">
+          <asp:TextBox
+            ID = "F_TAVerifierID"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text='<%# Bind("TAVerifierID") %>'
+            AutoCompleteType = "None"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for TA Bill Verifier."
+            onblur= "script_atnApproverChangeRequest.validate_TAVerifierID(this);"
+            Runat="Server" />
+          <asp:Label
+            ID = "F_TAVerifierID_Display"
+            Text='<%# Eval("HRM_Employees4_EmployeeName") %>'
+            CssClass="myLbl"
+            Runat="Server" />
+          <AJX:AutoCompleteExtender
+            ID="ACETAVerifierID"
+            BehaviorID="B_ACETAVerifierID"
+            ContextKey=""
+            UseContextKey="true"
+            ServiceMethod="TAVerifierIDCompletionList"
+            TargetControlID="F_TAVerifierID"
+            EnableCaching="false"
+            CompletionInterval="100"
+            FirstRowSelected="true"
+            MinimumPrefixLength="1"
+            OnClientItemSelected="script_atnApproverChangeRequest.ACETAVerifierID_Selected"
+            OnClientPopulating="script_atnApproverChangeRequest.ACETAVerifierID_Populating"
+            OnClientPopulated="script_atnApproverChangeRequest.ACETAVerifierID_Populated"
+            CompletionSetCount="10"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            Runat="Server" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_TAApproverID" runat="server" Text="TA Bill Approver :" /><span style="color:red">*</span>
+        </td>
+        <td colspan="3">
+          <asp:TextBox
+            ID = "F_TAApproverID"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text='<%# Bind("TAApproverID") %>'
+            AutoCompleteType = "None"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for TA Bill Approver."
+            ValidationGroup = "atnApproverChangeRequest"
+            onblur= "script_atnApproverChangeRequest.validate_TAApproverID(this);"
+            Runat="Server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVTAApproverID"
+            runat = "server"
+            ControlToValidate = "F_TAApproverID"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "atnApproverChangeRequest"
+            SetFocusOnError="true" />
+          <asp:Label
+            ID = "F_TAApproverID_Display"
+            Text='<%# Eval("HRM_Employees5_EmployeeName") %>'
+            CssClass="myLbl"
+            Runat="Server" />
+          <AJX:AutoCompleteExtender
+            ID="ACETAApproverID"
+            BehaviorID="B_ACETAApproverID"
+            ContextKey=""
+            UseContextKey="true"
+            ServiceMethod="TAApproverIDCompletionList"
+            TargetControlID="F_TAApproverID"
+            EnableCaching="false"
+            CompletionInterval="100"
+            FirstRowSelected="true"
+            MinimumPrefixLength="1"
+            OnClientItemSelected="script_atnApproverChangeRequest.ACETAApproverID_Selected"
+            OnClientPopulating="script_atnApproverChangeRequest.ACETAApproverID_Populating"
+            OnClientPopulated="script_atnApproverChangeRequest.ACETAApproverID_Populated"
+            CompletionSetCount="10"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            Runat="Server" />
+        </td>
+      </tr>
+      <tr>
+        <td class="alignright">
+          <asp:Label ID="L_TASA" runat="server" Text="TA Bill Santioning Authority :" /><span style="color:red">*</span>
+        </td>
+        <td colspan="3">
+          <asp:TextBox
+            ID = "F_TASA"
+            CssClass = "myfktxt"
+            Width="72px"
+            Text='<%# Bind("TASA") %>'
+            AutoCompleteType = "None"
+            onfocus = "return this.select();"
+            ToolTip="Enter value for TA Bill Santioning Authority."
+            ValidationGroup = "atnApproverChangeRequest"
+            onblur= "script_atnApproverChangeRequest.validate_TASA(this);"
+            Runat="Server" />
+          <asp:RequiredFieldValidator 
+            ID = "RFVTASA"
+            runat = "server"
+            ControlToValidate = "F_TASA"
+            ErrorMessage = "<div class='errorLG'>Required!</div>"
+            Display = "Dynamic"
+            EnableClientScript = "true"
+            ValidationGroup = "atnApproverChangeRequest"
+            SetFocusOnError="true" />
+          <asp:Label
+            ID = "F_TASA_Display"
+            Text='<%# Eval("HRM_Employees6_EmployeeName") %>'
+            CssClass="myLbl"
+            Runat="Server" />
+          <AJX:AutoCompleteExtender
+            ID="ACETASA"
+            BehaviorID="B_ACETASA"
+            ContextKey=""
+            UseContextKey="true"
+            ServiceMethod="TASACompletionList"
+            TargetControlID="F_TASA"
+            EnableCaching="false"
+            CompletionInterval="100"
+            FirstRowSelected="true"
+            MinimumPrefixLength="1"
+            OnClientItemSelected="script_atnApproverChangeRequest.ACETASA_Selected"
+            OnClientPopulating="script_atnApproverChangeRequest.ACETASA_Populating"
+            OnClientPopulated="script_atnApproverChangeRequest.ACETASA_Populated"
+            CompletionSetCount="10"
+            CompletionListCssClass = "autocomplete_completionListElement"
+            CompletionListItemCssClass = "autocomplete_listItem"
+            CompletionListHighlightedItemCssClass = "autocomplete_highlightedListItem"
+            Runat="Server" />
+        </td>
+      </tr>
+    </table>
+    </div>
+  </InsertItemTemplate>
 </asp:FormView>
-
- </ContentTemplate>
+  </ContentTemplate>
 </asp:UpdatePanel>
 <asp:ObjectDataSource 
-  ID = "ObjectDataSource1"
+  ID = "ODSatnApproverChangeRequest"
   DataObjectTypeName = "SIS.ATN.atnApproverChangeRequest"
-  InsertMethod="Insert"
+  InsertMethod="atnApproverChangeRequestInsert"
   OldValuesParameterFormatString = "original_{0}"
   TypeName = "SIS.ATN.atnApproverChangeRequest"
-  SelectMethod = "GetByID"
+  SelectMethod = "GetNewRecord"
   runat = "server" >
-<SelectParameters>
-  <asp:QueryStringParameter DefaultValue="0" Name="RequestID" QueryStringField="Code" Type="Int32" />
-</SelectParameters>
-<InsertParameters>
-  <asp:Parameter Name="RequestID" Type="Int32" Direction="Output" />
-</InsertParameters>
 </asp:ObjectDataSource>
 </div>
 </div>

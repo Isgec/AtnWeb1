@@ -40,7 +40,7 @@ Partial Class GD_atnSanctionApplication
           Exit For
         End If
       Next
-      GridView1.Sort("", SortDirection.Ascending)
+      GridView1.DataBind()
     End If
     If e.CommandName = "Rejected" Then
       Dim oGV As GridView = GridView1
@@ -51,7 +51,7 @@ Partial Class GD_atnSanctionApplication
           Exit For
         End If
       Next
-      GridView1.Sort("", SortDirection.Ascending)
+      GridView1.DataBind()
     End If
   End Sub
 End Class
