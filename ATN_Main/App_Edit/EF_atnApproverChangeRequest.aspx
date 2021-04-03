@@ -226,22 +226,27 @@
       </tr>
       <tr><td colspan="4" style="border-top: solid 1pt LightGrey" ></td></tr>
       <tr>
+        <td colspan="4">
+          <asp:Label runat="server" Font-Bold="true" Font-Italic="true" Font-Size="12px" Text="To change sanctioning authority pl. contact HR."></asp:Label>
+        </td>
+      </tr>
+      <tr>
         <td class="alignright">
           <asp:Label ID="L_TASA" runat="server" Text="TA Bill Santioning Authority :" /><span style="color:red">*</span>
         </td>
         <td colspan="3">
           <asp:TextBox
             ID = "F_TASA"
-            CssClass = "myfktxt"
+            CssClass = "dmyfktxt"
+            Enabled="false"
             Text='<%# Bind("TASA") %>'
             AutoCompleteType = "None"
             Width="72px"
             onfocus = "return this.select();"
             ToolTip="Enter value for TA Bill Santioning Authority."
-            ValidationGroup = "atnApproverChangeRequest"
             onblur= "script_atnApproverChangeRequest.validate_TASA(this);"
             Runat="Server" />
-          <asp:RequiredFieldValidator 
+<%--          <asp:RequiredFieldValidator 
             ID = "RFVTASA"
             runat = "server"
             ControlToValidate = "F_TASA"
@@ -249,7 +254,7 @@
             Display = "Dynamic"
             EnableClientScript = "true"
             ValidationGroup = "atnApproverChangeRequest"
-            SetFocusOnError="true" />
+            SetFocusOnError="true" />--%>
           <asp:Label
             ID = "F_TASA_Display"
             Text='<%# Eval("HRM_Employees6_EmployeeName") %>'
