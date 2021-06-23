@@ -112,10 +112,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="wsWebHrAdm1Soap" contract="HRISEvents.wsWebHrAdm1Soap" bindingType="basicHttpBinding" address="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx" bindingConfiguration="wsWebHrAdm1Soap">
+    <endpoint name="wsWebHrAdm1Soap" contract="HRISEvents.wsWebHrAdm1Soap" bindingType="basicHttpBinding" address="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx" bindingConfiguration="wsWebHrAdm1Soap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx</serializedValue>
+          <serializedValue>http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

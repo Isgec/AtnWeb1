@@ -108,10 +108,10 @@
   </wsdl:binding>
   <wsdl:service name="wsWebHrAdm1">
     <wsdl:port name="wsWebHrAdm1Soap" binding="tns:wsWebHrAdm1Soap">
-      <soap:address location="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx" />
+      <soap:address location="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx" />
     </wsdl:port>
     <wsdl:port name="wsWebHrAdm1Soap12" binding="tns:wsWebHrAdm1Soap12">
-      <soap12:address location="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx" />
+      <soap12:address location="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

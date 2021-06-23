@@ -460,7 +460,7 @@ Namespace SIS.ATN
           .AppendLine("<tr><td colspan=""2"" align=""center""><p>Above links are for Mobile users (Blackberry/Smartphone).</p><p>If you are on your computer or connected to office Network through VPN, Please use links given below.</p></td></tr>")
 
           .AppendLine("<tr><td style='text-align:center'><a style='color:green' href='http://192.9.200.146/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Approved & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "&Task=" & aplWord & "'>" & aplWord & "</a></td>")
-          .AppendLine("<td style='text-align:center'><a style='color:red' href='http://192.9.200.146/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Rejected & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>Reject</a></td></tr>")
+          .AppendLine("<td style='text-align:center'><a style='color:red' href='http://perk01/atnweb1/atnOnline.aspx?id=" & apl.Application & "&val=" & apl.Rejected & "&MailID=" & mMailID & "&LinkID=" & mLinkID & "'>Reject</a></td></tr>")
 
           .AppendLine("<tr><td colspan='2' style='font-style:italic'>This is auto generated E-Mail, DO NOT REPLY.</td></tr>")
           .AppendLine("</table>")
@@ -486,7 +486,7 @@ Namespace SIS.ATN
           Header = Header & "</style>"
           Header = Header & "</head>"
           Header = Header & "<body>"
-          Header &= "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
+          Header &= "<a href='http://perk01/atnweb1/dummy.aspx'>.</a><br/>"
           Header = Header & sb.ToString
           Header = Header & "</body></html>"
           oMsg.Body = Header
@@ -616,7 +616,7 @@ Namespace SIS.ATN
         Header = Header & "</style>"
         Header = Header & "</head>"
         Header = Header & "<body>"
-        Header &= "<a href='http://192.9.200.146/atnweb1/dummy.aspx'>.</a><br/>"
+        Header &= "<a href='http://perk01/atnweb1/dummy.aspx'>.</a><br/>"
         Header = Header & sb.ToString
         Header = Header & "</body></html>"
         oMsg.Body = Header

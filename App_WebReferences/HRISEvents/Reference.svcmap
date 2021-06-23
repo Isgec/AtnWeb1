@@ -19,11 +19,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="wswebhradm1.disco" MetadataType="Disco" ID="79f533ff-ebd9-4052-9508-f7c883197938" SourceId="1" SourceUrl="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx?disco" />
-    <MetadataFile FileName="wswebhradm1.wsdl" MetadataType="Wsdl" ID="5e3350e9-eaf1-441a-9311-40eb739df4c6" SourceId="1" SourceUrl="http://192.9.200.150/WebHRAdm1/app_services/wswebhradm1.asmx?wsdl" />
+    <MetadataFile FileName="wswebhradm1.disco" MetadataType="Disco" ID="79f533ff-ebd9-4052-9508-f7c883197938" SourceId="1" SourceUrl="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx?disco" />
+    <MetadataFile FileName="wswebhradm1.wsdl" MetadataType="Wsdl" ID="5e3350e9-eaf1-441a-9311-40eb739df4c6" SourceId="1" SourceUrl="http://perk03/WebHRAdm1/app_services/wswebhradm1.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

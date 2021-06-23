@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <script runat="server">
-  Dim conPerks As String = "Data Source=192.9.200.150;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
+  Dim conPerks As String = "Data Source=perk03;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
   Dim conLocal As String = "Data Source=11.11.16.30\LGSQL2005;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
   Dim strPara As String = Guid.NewGuid().ToString()
   Dim strUser As String = ""
@@ -23,9 +23,9 @@
       End Using
     End Using
     If Not cnt Then
-      Response.Redirect("http://192.9.200.146/atnweb1/default.aspx?wpid=" & strPara, True)
+      Response.Redirect("http://perk01/atnweb1/default.aspx?wpid=" & strPara, True)
     Else
-      Response.Redirect("http://192.9.200.146/atnweb1/default.aspx?wpid=" & strPara & "&cnt=1", True)
+      Response.Redirect("http://perk01/atnweb1/default.aspx?wpid=" & strPara & "&cnt=1", True)
     End If
   End Sub
 </script>
